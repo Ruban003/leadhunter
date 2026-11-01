@@ -804,10 +804,10 @@
         <div class="header-actions">
             <div class="status-pill">
                 <span class="status-pulse"></span>
-                <span>US Discovery Engine &bull; Ready</span>
+                <span>Global &amp; India AI Engine &bull; Ready</span>
             </div>
-            <a href="https://designs.rvsmps.store" target="_blank" class="btn-portfolio-link">
-                <span>View $9 Portfolio</span>
+            <a href="https://portfolio.rvsmps.store" target="_blank" class="btn-portfolio-link">
+                <span>View Live Portfolio</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
             </a>
         </div>
@@ -832,21 +832,44 @@
                     <div class="form-grid">
                         <div class="field">
                             <label>Industry / Niche</label>
-                            <input type="text" id="nicheInput" placeholder="e.g. Roofing Contractors" value="Roofing Contractors" required>
+                            <input type="text" id="nicheInput" placeholder="e.g. Salons &amp; Spas or Dental Clinics" value="Luxury Salons" required>
                         </div>
                         <div class="field">
-                            <label>Target US Metro</label>
-                            <select id="cityInput">
-                                <option value="Austin, TX" selected>Austin, TX</option>
-                                <option value="Miami, FL">Miami, FL</option>
-                                <option value="Dallas, TX">Dallas, TX</option>
-                                <option value="Phoenix, AZ">Phoenix, AZ</option>
-                                <option value="Atlanta, GA">Atlanta, GA</option>
-                                <option value="Denver, CO">Denver, CO</option>
-                                <option value="Charlotte, NC">Charlotte, NC</option>
-                                <option value="Tampa, FL">Tampa, FL</option>
-                                <option value="San Diego, CA">San Diego, CA</option>
+                            <label>Target Metro / City</label>
+                            <select id="cityInput" onchange="toggleCustomCity(this)">
+                                <optgroup label="🇮🇳 India &amp; Bengaluru Metros">
+                                    <option value="Bangalore, Karnataka" selected>Bangalore, Karnataka</option>
+                                    <option value="Indiranagar, Bangalore">Indiranagar, Bangalore</option>
+                                    <option value="Koramangala, Bangalore">Koramangala, Bangalore</option>
+                                    <option value="HSR Layout, Bangalore">HSR Layout, Bangalore</option>
+                                    <option value="Whitefield, Bangalore">Whitefield, Bangalore</option>
+                                    <option value="Jayanagar, Bangalore">Jayanagar, Bangalore</option>
+                                    <option value="Chennai, Tamil Nadu">Chennai, Tamil Nadu</option>
+                                    <option value="Karur, Tamil Nadu">Karur, Tamil Nadu</option>
+                                    <option value="Coimbatore, Tamil Nadu">Coimbatore, Tamil Nadu</option>
+                                    <option value="Hyderabad, Telangana">Hyderabad, Telangana</option>
+                                    <option value="Mumbai, Maharashtra">Mumbai, Maharashtra</option>
+                                    <option value="Delhi NCR">Delhi NCR</option>
+                                </optgroup>
+                                <optgroup label="🇺🇸 US &amp; Global Metros">
+                                    <option value="Austin, TX">Austin, TX</option>
+                                    <option value="Miami, FL">Miami, FL</option>
+                                    <option value="Dallas, TX">Dallas, TX</option>
+                                    <option value="Phoenix, AZ">Phoenix, AZ</option>
+                                    <option value="Atlanta, GA">Atlanta, GA</option>
+                                    <option value="Denver, CO">Denver, CO</option>
+                                    <option value="Charlotte, NC">Charlotte, NC</option>
+                                    <option value="Tampa, FL">Tampa, FL</option>
+                                    <option value="San Diego, CA">San Diego, CA</option>
+                                    <option value="London, UK">London, UK</option>
+                                    <option value="Dubai, UAE">Dubai, UAE</option>
+                                </optgroup>
+                                <option value="custom">✏️ Custom City (Type manually)...</option>
                             </select>
+                        </div>
+                        <div class="field" id="customCityWrap" style="display: none;">
+                            <label>Custom City / Area</label>
+                            <input type="text" id="customCityInput" placeholder="e.g. Pune, Maharashtra or Brooklyn, NY">
                         </div>
                         <div class="field">
                             <label>Batch Size</label>
@@ -863,12 +886,12 @@
                     </div>
 
                     <div class="preset-row">
-                        <span class="preset-tag">Preset Niches:</span>
+                        <span class="preset-tag">Quick Presets:</span>
+                        <button type="button" class="preset-chip" onclick="setPreset('Luxury Salons &amp; Spas', 'Bangalore, Karnataka')">Bangalore Salons</button>
+                        <button type="button" class="preset-chip" onclick="setPreset('Dental &amp; Aesthetic Clinics', 'Indiranagar, Bangalore')">Indiranagar Clinics</button>
+                        <button type="button" class="preset-chip" onclick="setPreset('Bridal Boutiques &amp; Makeovers', 'Koramangala, Bangalore')">Koramangala Bridal</button>
+                        <button type="button" class="preset-chip" onclick="setPreset('Luxury Med Spa', 'Miami, FL')">Miami Med Spas</button>
                         <button type="button" class="preset-chip" onclick="setPreset('Roofing Contractors', 'Austin, TX')">Austin Roofers</button>
-                        <button type="button" class="preset-chip" onclick="setPreset('Cosmetic Dentists', 'Miami, FL')">Miami Dentists</button>
-                        <button type="button" class="preset-chip" onclick="setPreset('Luxury Med Spa', 'Dallas, TX')">Dallas Med Spas</button>
-                        <button type="button" class="preset-chip" onclick="setPreset('Custom Home Remodeling', 'Phoenix, AZ')">Phoenix Remodelers</button>
-                        <button type="button" class="preset-chip" onclick="setPreset('Commercial HVAC', 'Atlanta, GA')">Atlanta HVAC</button>
                     </div>
                 </form>
             </div>
@@ -1000,9 +1023,13 @@
                     Press <span class="shortcut-key">Esc</span> to dismiss &bull; <span class="shortcut-key">Ctrl+C</span> to copy
                 </div>
                 <div class="modal-action-btns">
+                    <a id="btnWhatsApp" href="#" target="_blank" class="btn-modal-mail" style="background: #10b981; color: #fff; border-color: #10b981; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19.02L7.55 18.84L4.44 19.66L5.27 16.63L5.07 16.31C4.24 15 3.81 13.48 3.81 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
+                        <span>Send WhatsApp</span>
+                    </a>
                     <a id="btnMailto" href="#" class="btn-modal-mail">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                        <span>Open in Mail Client</span>
+                        <span>Open Mail</span>
                     </a>
                     <button class="btn-modal-copy" onclick="copyPitchText()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -1147,27 +1174,62 @@
 
 
         // --- 2. Lead Discovery & Audit Execution ---
+        function toggleCustomCity(sel) {
+            const wrap = document.getElementById('customCityWrap');
+            if (sel.value === 'custom') {
+                wrap.style.display = 'block';
+                document.getElementById('customCityInput').focus();
+                document.getElementById('telemetryMetro').innerText = "CUSTOM";
+            } else {
+                wrap.style.display = 'none';
+                document.getElementById('telemetryMetro').innerText = sel.value;
+            }
+        }
+
         function setPreset(niche, city) {
             document.getElementById('nicheInput').value = niche;
-            document.getElementById('cityInput').value = city;
+            const citySelect = document.getElementById('cityInput');
+            let found = false;
+            for (let opt of citySelect.options) {
+                if (opt.value === city) {
+                    citySelect.value = city;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                citySelect.value = 'custom';
+                document.getElementById('customCityWrap').style.display = 'block';
+                document.getElementById('customCityInput').value = city;
+            } else {
+                document.getElementById('customCityWrap').style.display = 'none';
+            }
             document.getElementById('telemetryMetro').innerText = city;
         }
 
         document.getElementById('cityInput').addEventListener('change', (e) => {
-            document.getElementById('telemetryMetro').innerText = e.target.value;
+            if (e.target.value !== 'custom') {
+                document.getElementById('telemetryMetro').innerText = e.target.value;
+            }
         });
 
         async function startScan(e) {
             e.preventDefault();
             const niche = document.getElementById('nicheInput').value.trim();
-            const city = document.getElementById('cityInput').value.trim();
+            const citySelect = document.getElementById('cityInput');
+            let city = citySelect.value.trim();
+            if (city === 'custom') {
+                city = document.getElementById('customCityInput').value.trim() || 'Bangalore, Karnataka';
+            }
             const limit = document.getElementById('limitSelect').value;
 
             const huntBtn = document.getElementById('huntBtn');
             const progressBox = document.getElementById('progressBox');
             const radarStatus = document.getElementById('radarStatusText');
             const telemetryStatus = document.getElementById('telemetryStatus');
+            const telemetryMetro = document.getElementById('telemetryMetro');
 
+            telemetryMetro.innerText = city;
             huntBtn.disabled = true;
             huntBtn.style.opacity = '0.6';
             progressBox.style.display = 'flex';
@@ -1328,6 +1390,9 @@
 
                     const mailtoUrl = `mailto:${encodeURIComponent(pitch.recipient)}?subject=${encodeURIComponent(pitch.subject)}&body=${encodeURIComponent(pitch.body)}`;
                     document.getElementById('btnMailto').href = mailtoUrl;
+
+                    const waUrl = pitch.whatsapp_url || `https://web.whatsapp.com/send?text=${encodeURIComponent(pitch.whatsapp_body || pitch.body)}`;
+                    document.getElementById('btnWhatsApp').href = waUrl;
 
                     document.getElementById('pitchModal').style.display = 'flex';
                 })
