@@ -806,6 +806,10 @@
                 <span class="status-pulse"></span>
                 <span>Global &amp; India AI Engine &bull; Ready</span>
             </div>
+            <a href="https://docs.google.com/spreadsheets/d/1puklMoU0iIF8EI7GpGQ9yRy-w077sfTj8TIQMWoDHjA/edit" target="_blank" class="btn-portfolio-link" style="background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.35); color: #34d399;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Google Sheet Pipeline</span>
+            </a>
             <a href="https://portfolio.rvsmps.store" target="_blank" class="btn-portfolio-link">
                 <span>View Live Portfolio</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
@@ -962,9 +966,13 @@
 
             <div class="table-tools">
                 <input type="text" id="tableSearchInput" class="search-table-input" placeholder="Search company, flaw, domain..." oninput="handleTableSearch()">
+                <a href="https://docs.google.com/spreadsheets/d/1puklMoU0iIF8EI7GpGQ9yRy-w077sfTj8TIQMWoDHjA/edit" target="_blank" class="btn-export" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34d399; text-decoration: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span>Google Sheet</span>
+                </a>
                 <button class="btn-export" onclick="exportCSV()">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span>Export CSV</span>
+                    <span>Export Pitches &amp; Leads</span>
                 </button>
             </div>
         </div>
@@ -1451,6 +1459,7 @@
                 showToast("Please hunt for leads first before exporting.");
                 return;
             }
+            showToast("Exporting complete lead data & pitch details for Google Sheets...");
             window.location.href = '/api/export';
         }
 

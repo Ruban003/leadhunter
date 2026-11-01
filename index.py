@@ -142,31 +142,143 @@ class handler(http.server.BaseHTTPRequestHandler):
         elif parsed.path == '/api/export':
             output = io.StringIO()
             writer = csv.writer(output)
-            writer.writerow(['Business Name', 'Website', 'Domain', 'City', 'Niche', 'Grade', 'Score', 'Load Time (s)', 'Has SSL', 'Mobile Ready', 'Copyright Year', 'Emails', 'Phone', 'Flaws Detected'])
-            for l in CURRENT_LEADS:
+            writer.writerow([
+                'Timestamp',
+                'Status',
+                'Business Name',
+                'City',
+                'Niche',
+                'Website',
+                'Domain',
+                'Audit Grade',
+                'Audit Score',
+                'Phone / WhatsApp',
+                'Email',
+                'Flaws Detected',
+                'Custom Mockup Preview URL',
+                'Cold Email Subject',
+                'Cold Email Body',
+                'WhatsApp Pitch Message',
+                'WhatsApp 1-Click Link',
+                'Gmail 1-Click Link',
+                'Offer Price'
+            ])
+            
+            host_header = self.headers.get('Host', 'leads.rvsmps.store')
+            base_url = f"https://{host_header}"
+            
+            for idx, l in enumerate(CURRENT_LEADS):
+                name = l.get('name', '')
+                city = l.get('city', '')
+                niche = l.get('niche', '')
+                domain = l.get('domain', '')
+                phone = l.get('phone', '')
+                emails = l.get('emails', [])
+                email = emails[0] if emails else f"contact@{domain}"
+                
+                mockup_url = f"{base_url}/mockup/{idx}?name={urllib.parse.quote(name)}&city={urllib.parse.quote(city)}&niche={urllib.parse.quote(niche)}&domain={urllib.parse.quote(domain)}&phone={urllib.parse.quote(phone)}"
+                pitch = generate_pitch(l, mockup_url)
+                
                 writer.writerow([
-                    l.get('name', ''),
+                    l.get('scanned_at', '2026-11-01'),
+                    'New Lead',
+                    name,
+                    city,
+                    niche,
                     l.get('url', ''),
-                    l.get('domain', ''),
-                    l.get('city', ''),
-                    l.get('niche', ''),
-                    l.get('grade', ''),
-                    l.get('score', ''),
-                    l.get('load_time', ''),
-                    l.get('has_ssl', ''),
-                    l.get('is_mobile_ready', ''),
-                    l.get('copyright_year', ''),
-                    "; ".join(l.get('emails', [])),
-                    l.get('phone', ''),
-                    " | ".join(l.get('flaws', []))
+                    domain,
+                    l.get('grade', 'C'),
+                    f"{l.get('score', 60)}%",
+                    phone,
+                    email,
+                    " | ".join(l.get('flaws', [])),
+                    mockup_url,
+                    pitch.get('subject', ''),
+                    pitch.get('body', ''),
+                    pitch.get('whatsapp_body', ''),
+                    pitch.get('whatsapp_url', ''),
+                    pitch.get('gmail_url', ''),
+                    '₹2,999 Starter'
                 ])
             csv_data = output.getvalue()
             self.send_response(200)
-            self.send_header('Content-Type', 'text/csv')
-            self.send_header('Content-Disposition', 'attachment; filename="leadhunter_us_leads.csv"')
+            self.send_header('Content-Type', 'text/csv; charset=utf-8')
+            self.send_header('Content-Disposition', 'attachment; filename="leadhunter_pipeline_leads.csv"')
             self.end_headers()
             self.wfile.write(csv_data.encode('utf-8'))
             return
+
+        elif parsed.path == '/api/sync-sheet':
+            # Accepts POST or GET with webhook URL to push all leads to Google Sheets
+            webhook_url = params.get('webhook_url', [''])[0]
+            if not webhook_url:
+                webhook_url = os.environ.get('GSHEET_WEBHOOK_URL', '')
+                
+            host_header = self.headers.get('Host', 'leads.rvsmps.store')
+            base_url = f"https://{host_header}"
+            
+            payload_leads = []
+            for idx, l in enumerate(CURRENT_LEADS):
+                name = l.get('name', '')
+                city = l.get('city', '')
+                niche = l.get('niche', '')
+                domain = l.get('domain', '')
+                phone = l.get('phone', '')
+                emails = l.get('emails', [])
+                email = emails[0] if emails else f"contact@{domain}"
+                
+                mockup_url = f"{base_url}/mockup/{idx}?name={urllib.parse.quote(name)}&city={urllib.parse.quote(city)}&niche={urllib.parse.quote(niche)}&domain={urllib.parse.quote(domain)}&phone={urllib.parse.quote(phone)}"
+                pitch = generate_pitch(l, mockup_url)
+                
+                payload_leads.append({
+                    'timestamp': '2026-11-01',
+                    'status': 'New Lead',
+                    'name': name,
+                    'city': city,
+                    'niche': niche,
+                    'url': l.get('url', ''),
+                    'grade': l.get('grade', 'C'),
+                    'score': l.get('score', 60),
+                    'phone': phone,
+                    'email': email,
+                    'flaws': " | ".join(l.get('flaws', [])),
+                    'mockup_url': mockup_url,
+                    'pitch_subject': pitch.get('subject', ''),
+                    'pitch_body': pitch.get('body', ''),
+                    'whatsapp_body': pitch.get('whatsapp_body', ''),
+                    'whatsapp_url': pitch.get('whatsapp_url', ''),
+                    'gmail_url': pitch.get('gmail_url', ''),
+                    'notes': '₹2,999 Starter'
+                })
+                
+            if webhook_url and payload_leads:
+                try:
+                    import urllib.request
+                    req = urllib.request.Request(
+                        webhook_url,
+                        data=json.dumps({'leads': payload_leads}).encode('utf-8'),
+                        headers={'Content-Type': 'application/json'},
+                        method='POST'
+                    )
+                    with urllib.request.urlopen(req, timeout=10) as resp:
+                        resp_data = resp.read().decode('utf-8')
+                        self.send_response(200)
+                        self.send_header('Content-Type', 'application/json')
+                        self.end_headers()
+                        self.wfile.write(json.dumps({'status': 'synced', 'count': len(payload_leads), 'response': resp_data}).encode('utf-8'))
+                        return
+                except Exception as e:
+                    self.send_response(500)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({'error': str(e)}).encode('utf-8'))
+                    return
+            else:
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'status': 'ready', 'leads': payload_leads, 'spreadsheet_id': '1puklMoU0iIF8EI7GpGQ9yRy-w077sfTj8TIQMWoDHjA'}).encode('utf-8'))
+                return
 
         self.send_response(404)
         self.end_headers()
