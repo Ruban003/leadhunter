@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruban — Freelance Website & UI Designer</title>
+    <meta name="description" content="Modern, clean, minimalist website design that turns visitors into high-paying clients. 3 to 5 day fast delivery.">
+    <link rel="icon" type="image/svg+xml" href="assets/rv-logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07090e;
+            --surface: #0f1420;
+            --surface-card: #151c2d;
+            --border: #1f293d;
+            --border-hover: rgba(99, 102, 241, 0.45);
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --accent: #10b981;
+            --accent-glow: rgba(16, 185, 129, 0.25);
+            --ruby: #e11d48;
+            --ruby-glow: rgba(225, 29, 72, 0.35);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dark: #cbd5e1;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================================================
+           1. Interactive Mouse Follower, Cursor Ring & Ambient Glow
+           ========================================================= */
+        
+        /* Global Ambient Cursor Light Beam */
+        .mouse-glow-orb {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 650px;
+            height: 650px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.13) 0%, rgba(225, 29, 72, 0.05) 35%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            filter: blur(40px);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            will-change: transform;
+        }
+        .mouse-glow-orb.active {
+            opacity: 1;
+        }
+
+        /* Precision Cursor Dot */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 7px;
+            height: 7px;
+            background: #ffffff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.15s ease, background 0.2s ease;
+            will-change: transform;
+        }
+        .cursor-dot.active {
+            opacity: 1;
+        }
+
+        /* Smooth Lagging Interactive Ring */
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.45);
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: transparent;
+            opacity: 0;
+            transition: width 0.32s var(--ease-out-expo), 
+                        height 0.32s var(--ease-out-expo), 
+                        border-color 0.25s ease, 
+                        background-color 0.25s ease, 
+                        color 0.25s ease,
+                        box-shadow 0.25s ease,
+                        opacity 0.3s ease;
+            will-change: transform;
+        }
+        .cursor-ring.active {
+            opacity: 1;
+        }
+
+        /* Hovering on Interactive Links & Buttons */
+        body.cursor-hover .cursor-ring {
+            width: 52px;
+            height: 52px;
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.15);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        body.cursor-hover .cursor-dot {
+            transform: translate(-50%, -50%) scale(0.4);
+            background: var(--ruby);
+        }
+
+        /* Hovering on Portfolio Case Study Cards */
+        body.cursor-card-hover .cursor-ring {
+            width: 76px;
+            height: 76px;
+            border-color: var(--ruby);
+            background: rgba(225, 29, 72, 0.22);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            box-shadow: 0 0 28px rgba(225, 29, 72, 0.4);
+        }
+        body.cursor-card-hover .cursor-dot {
+            opacity: 0;
+        }
+
+        /* Mouse down / Click feedback */
+        body.cursor-clicking .cursor-ring {
+            transform: translate(-50%, -50%) scale(0.82) !important;
+        }
+
+        /* Click Ripple Shockwave */
+        .click-ripple {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--ruby);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%) scale(1);
+            animation: rippleEffect 0.55s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+        @keyframes rippleEffect {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(4.5); opacity: 0; border-color: var(--primary); }
+        }
+
+        /* Disable custom cursor on mobile touch */
+        @media (hover: none) and (pointer: coarse) {
+            .mouse-glow-orb, .cursor-dot, .cursor-ring, .click-ripple {
+                display: none !important;
+            }
+        }
+
+        /* Ambient floating light orbs */
+        .ambient-glow {
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(225, 29, 72, 0.08) 45%, rgba(7, 9, 14, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+            animation: ambientFloat 14s infinite alternate ease-in-out;
+            filter: blur(40px);
+        }
+        @keyframes ambientFloat {
+            0% { transform: translateX(-50%) translateY(0) scale(1); }
+            50% { transform: translateX(-48%) translateY(35px) scale(1.08); }
+            100% { transform: translateX(-52%) translateY(10px) scale(0.95); }
+        }
+
+        /* Top Launch Banner with Shimmer */
+        .launch-banner {
+            background: linear-gradient(90deg, #dc2626, #7c3aed, #2563eb, #dc2626);
+            background-size: 300% 100%;
+            animation: gradientWave 10s infinite linear;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        @keyframes gradientWave {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+        .banner-tag {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 3px 9px;
+            border-radius: 4px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .banner-link {
+            background: #ffffff;
+            color: #1e1b4b;
+            padding: 4px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 800;
+            margin-left: 6px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .banner-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.35);
+        }
+
+        /* Header Navigation */
+        header {
+            position: sticky;
+            top: 38px;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(7, 9, 14, 0.75);
+            border-bottom: 1px solid rgba(31, 41, 61, 0.6);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: padding 0.3s var(--ease-out-expo), background 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo);
+        }
+        header.scrolled {
+            padding: 12px 40px;
+            background: rgba(7, 9, 14, 0.92);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            border-bottom-color: rgba(99, 102, 241, 0.2);
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.25s var(--ease-out-expo);
+        }
+        .logo:hover {
+            transform: translateX(2px);
+        }
+        .logo-icon {
+            height: 36px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 4px 12px rgba(225, 29, 72, 0.35));
+            transition: transform 0.35s var(--ease-out-expo);
+        }
+        .logo:hover .logo-icon {
+            transform: scale(1.08) rotate(-3deg);
+        }
+        .logo-text-wrap {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .logo-title {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+        .logo-sub {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--ruby);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        nav { display: flex; align-items: center; gap: 30px; }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            padding: 4px 0;
+            transition: color 0.25s ease;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--ruby));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s var(--ease-out-expo);
+            border-radius: 2px;
+        }
+        nav a:hover {
+            color: var(--text-main);
+        }
+        nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .header-cta {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.25s var(--ease-out-expo);
+            box-shadow: 0 4px 15px var(--primary-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        .header-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s ease;
+        }
+        .header-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--primary-glow);
+        }
+        .header-cta:hover::before {
+            left: 100%;
+        }
+        .header-cta:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 90px 0 70px;
+            text-align: center;
+        }
+        .availability-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            animation: fadeInDown 0.8s var(--ease-out-expo) forwards;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .availability-pill:hover {
+            transform: translateY(-2px);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 1.8s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(1.3); }
+        }
+
+        .hero h1 {
+            font-size: 60px;
+            line-height: 1.12;
+            letter-spacing: -1.8px;
+            font-weight: 800;
+            max-width: 900px;
+            margin: 0 auto 24px;
+            background: linear-gradient(180deg, #ffffff 40%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.9s var(--ease-out-expo) 0.1s backwards;
+        }
+        .hero p {
+            font-size: 19px;
+            color: var(--text-muted);
+            max-width: 680px;
+            margin: 0 auto 36px;
+            line-height: 1.6;
+            animation: fadeInUp 0.9s var(--ease-out-expo) 0.2s backwards;
+        }
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.9s var(--ease-out-expo) 0.3s backwards;
+        }
+        .btn-main {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            padding: 16px 36px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px var(--primary-glow);
+            transition: all 0.25s var(--ease-out-expo);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn-main:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 16px 36px var(--primary-glow);
+        }
+        .btn-main:hover::before {
+            left: 100%;
+        }
+        .btn-main:active {
+            transform: translateY(0) scale(0.98);
+        }
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.25s var(--ease-out-expo);
+        }
+        .btn-secondary:hover {
+            background: var(--surface-card);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .btn-secondary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Trust Stats Ribbon with Counter Animation */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 840px;
+            margin: 0 auto;
+            padding: 24px 30px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            animation: fadeInUp 0.9s var(--ease-out-expo) 0.4s backwards;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stats-grid:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .stat-item h3 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: transform 0.25s ease;
+        }
+        .stat-item:hover h3 {
+            transform: scale(1.05);
+            color: #a5b4fc;
+        }
+        .stat-item p {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* Section Global */
+        section { padding: 90px 0; }
+        .section-header { text-align: center; margin-bottom: 55px; }
+        .section-tag {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .section-header h2 {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 14px;
+        }
+        .section-header p {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Scroll-Driven Entrance Animations */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+            will-change: opacity, transform;
+        }
+        .reveal-item.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stagger-1 { transition-delay: 0.05s; }
+        .stagger-2 { transition-delay: 0.15s; }
+        .stagger-3 { transition-delay: 0.25s; }
+
+        /* Interactive Spotlight Hover Cards with 3D Tilt (Linear / Raycast Style) */
+        .spotlight-card {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: border-color 0.3s var(--ease-out-expo), 
+                        transform 0.2s var(--ease-out-expo), 
+                        box-shadow 0.3s var(--ease-out-expo);
+            will-change: transform;
+        }
+        .spotlight-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(550px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.16), transparent 45%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+        }
+        .spotlight-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Portfolio / Case Studies */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            perspective: 1200px;
+        }
+        .work-card {
+            display: flex;
+            flex-direction: column;
+        }
+        .work-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+        .work-img-wrap {
+            height: 230px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #0f172a;
+        }
+        .work-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+        }
+        .work-card:hover .work-img {
+            transform: scale(1.09);
+        }
+        .work-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.85) 100%);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .work-card:hover .work-img-overlay {
+            opacity: 0.9;
+        }
+        .mockup-preview-badge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(15, 23, 42, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f8fafc;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(8px);
+            z-index: 2;
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+        .work-card:hover .mockup-preview-badge {
+            transform: translateY(-2px);
+            background: rgba(99, 102, 241, 0.88);
+        }
+        .work-content {
+            padding: 24px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+        .work-content h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+            transition: color 0.25s ease;
+        }
+        .work-card:hover .work-content h3 {
+            color: #a5b4fc;
+        }
+        .work-content p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .work-tags { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .work-tag {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            color: #cbd5e1;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .work-card:hover .work-tag {
+            border-color: rgba(99, 102, 241, 0.35);
+            transform: translateY(-1px);
+        }
+        .btn-view-work {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+            padding: 11px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.25s var(--ease-out-expo);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-view-work:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            perspective: 1200px;
+        }
+        .service-box {
+            padding: 34px 28px;
+            position: relative;
+        }
+        .service-box:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+        }
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: transform 0.3s var(--ease-out-expo), background 0.3s ease;
+        }
+        .service-box:hover .service-icon {
+            transform: scale(1.12) rotate(4deg);
+            background: rgba(99, 102, 241, 0.22);
+            color: #c7d2fe;
+        }
+        .service-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .service-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff; }
+        .service-box p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+        /* Pricing Cards with Spotlight */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            align-items: center;
+            perspective: 1200px;
+        }
+        .pricing-card {
+            padding: 38px 30px;
+        }
+        .pricing-card:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.7);
+        }
+        .pricing-card.featured {
+            background: linear-gradient(180deg, #161e31 0%, #0f1420 100%);
+            border: 2px solid var(--primary);
+            transform: scale(1.04);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.18);
+        }
+        .pricing-card.featured:hover {
+            transform: scale(1.06);
+            box-shadow: 0 28px 60px rgba(99, 102, 241, 0.3);
+        }
+        .popular-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #fff;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+        .pricing-card h3 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+        .pricing-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; min-height: 42px; }
+        .price {
+            font-size: 42px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .price span { font-size: 15px; color: var(--text-muted); font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .features-list { list-style: none; margin-bottom: 30px; }
+        .features-list li {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .features-list li svg { color: var(--accent); flex-shrink: 0; }
+        .btn-pricing {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-align: center;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.25s var(--ease-out-expo);
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            color: #fff;
+        }
+        .btn-pricing:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .btn-pricing.btn-featured {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+        .btn-pricing.btn-featured:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+
+        /* Contact Section */
+        .contact-wrap {
+            padding: 60px 50px;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 50px;
+            align-items: center;
+        }
+        .contact-info h2 { font-size: 36px; font-weight: 800; margin-bottom: 16px; }
+        .contact-info p { font-size: 16px; color: var(--text-muted); margin-bottom: 30px; }
+        .direct-email-box {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: all 0.25s ease;
+        }
+        .direct-email-box:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+        .direct-email-box div h4 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .direct-email-box div a { color: #6ee7b7; font-weight: 700; text-decoration: none; font-size: 15px; }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            z-index: 2;
+        }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .contact-form input, .contact-form select, .contact-form textarea {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+            transform: translateY(-1px);
+        }
+        .contact-form textarea { height: 120px; resize: none; }
+        .btn-send {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px var(--primary-glow);
+            transition: all 0.25s var(--ease-out-expo);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-send::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 35px var(--primary-glow);
+        }
+        .btn-send:hover::before {
+            left: 100%;
+        }
+        .btn-send:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 45px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        footer a { color: var(--text-main); text-decoration: none; font-weight: 600; }
+        footer a:hover { color: #a5b4fc; text-decoration: underline; }
+
+        /* Keyframe Helpers */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Accessibility: Prefers Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .ambient-glow { animation: none; }
+            .reveal-item { opacity: 1 !important; transform: none !important; }
+            .mouse-glow-orb, .cursor-dot, .cursor-ring { display: none !important; }
+        }
+
+        @media (max-width: 900px) {
+            header { padding: 14px 20px; }
+            .hero h1 { font-size: 38px; }
+            .portfolio-grid, .services-grid, .pricing-grid, .stats-grid { grid-template-columns: 1fr; }
+            .pricing-card.featured { transform: none; }
+            .pricing-card.featured:hover { transform: translateY(-4px); }
+            .contact-wrap { grid-template-columns: 1fr; padding: 30px 20px; }
+            .form-row-2 { grid-template-columns: 1fr; }
+            nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Interactive Mouse Follower Elements -->
+    <div class="mouse-glow-orb" id="mouseGlowOrb"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing">VIEW</div>
+
+    <!-- Launch Offer Top Banner -->
+    <div class="launch-banner">
+        <span class="banner-tag">PROMOTIONAL OFFER</span>
+        <span><strong>LIMITED LAUNCH SPECIAL:</strong> Full Modern Homepage Redesign for just <strong>$9</strong> (Normally $299)</span>
+        <span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px; font-size: 11px;">First 10 Clients Only</span>
+        <a href="#contact" class="banner-link">Claim $9 Offer &rarr;</a>
+    </div>
+
+    <div class="ambient-glow"></div>
+
+    <header id="mainHeader">
+        <a href="#" class="logo">
+            <img src="assets/rv-logo.svg" alt="RV Monogram" class="logo-icon">
+            <div class="logo-text-wrap">
+                <span class="logo-title">Ruban Velankanni<span style="color: #e11d48;">.</span></span>
+                <span class="logo-sub">UI/UX &bull; Digital Architecture</span>
+            </div>
+        </a>
+        <nav>
+            <a href="#work">Featured Work</a>
+            <a href="#services">Services</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <a href="#contact" class="header-cta">Get Free Redesign Mockup &rarr;</a>
+    </header>
+
+    <main class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="availability-pill">
+                <span class="pulse-dot"></span> Available for new client projects &bull; 3&ndash;5 Day Delivery
+            </div>
+            <h1>Websites That Turn Visitors Into High-Paying Customers.</h1>
+            <p>
+                Hi, I'm <strong>Ruban</strong>. I design modern, clean, and minimalist UI for growing businesses. 
+                Zero clutter, generous whitespace, and engineered to drive phone calls and booked appointments.
+            </p>
+            <div class="hero-actions">
+                <a href="#contact" class="btn-main">Claim Your $9 Redesign Concept &rarr;</a>
+                <a href="#work" class="btn-secondary">Explore Recent Work</a>
+            </div>
+
+            <div class="stats-grid spotlight-card">
+                <div class="stat-item">
+                    <h3 data-count-target="3">3&ndash;5 Days</h3>
+                    <p>Average Project Turnaround</p>
+                </div>
+                <div class="stat-item">
+                    <h3 data-count-target="100">100%</h3>
+                    <p>Mobile-Optimized &amp; Responsive</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Figma &amp; Framer</h3>
+                    <p>Developer-Ready Assets</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Work -->
+        <section id="work">
+            <div class="section-header reveal-item">
+                <span class="section-tag">Case Studies &amp; Concepts</span>
+                <h2>Recent High-Converting Designs</h2>
+                <p>Designed for real businesses to maximize local customer inquiries and conversions.</p>
+            </div>
+
+            <div class="portfolio-grid">
+                <!-- Project 1 -->
+                <div class="work-card spotlight-card reveal-item stagger-1">
+                    <div class="work-img-wrap">
+                        <span class="mockup-preview-badge">HOME SERVICES</span>
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Austin Roofing & Restoration Modern Architecture" class="work-img" loading="lazy">
+                        <div class="work-img-overlay"></div>
+                    </div>
+                    <div class="work-content">
+                        <div>
+                            <h3>Austin Roofing &amp; Restoration</h3>
+                            <p>High-contrast, trustworthy landing page redesign with instant damage estimate form and tap-to-call hero.</p>
+                            <div class="work-tags">
+                                <span class="work-tag">Figma</span>
+                                <span class="work-tag">Mobile First</span>
+                                <span class="work-tag">Lead Gen</span>
+                            </div>
+                        </div>
+                        <a href="#contact" class="btn-view-work">Request Case Study Demo &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="work-card spotlight-card reveal-item stagger-2">
+                    <div class="work-img-wrap">
+                        <span class="mockup-preview-badge">HEALTH &amp; WELLNESS</span>
+                        <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80" alt="Miami Cosmetic Dental Studio" class="work-img" loading="lazy">
+                        <div class="work-img-overlay"></div>
+                    </div>
+                    <div class="work-content">
+                        <div>
+                            <h3>Miami Cosmetic Dental Studio</h3>
+                            <p>Clean, serene dental care website featuring patient smiles gallery, doctor credentials, and 1-click consultation booking.</p>
+                            <div class="work-tags">
+                                <span class="work-tag">Minimalist UI</span>
+                                <span class="work-tag">Patient Booking</span>
+                                <span class="work-tag">Responsive</span>
+                            </div>
+                        </div>
+                        <a href="#contact" class="btn-view-work">Request Case Study Demo &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="work-card spotlight-card reveal-item stagger-3">
+                    <div class="work-img-wrap">
+                        <span class="mockup-preview-badge">LUXURY AESTHETICS</span>
+                        <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80" alt="Dallas Boutique Medical Spa" class="work-img" loading="lazy">
+                        <div class="work-img-overlay"></div>
+                    </div>
+                    <div class="work-content">
+                        <div>
+                            <h3>Dallas Boutique Medical Spa</h3>
+                            <p>Luxury spa experience showcasing non-invasive treatments, glowing testimonials, and VIP consultation scheduler.</p>
+                            <div class="work-tags">
+                                <span class="work-tag">Luxury Palette</span>
+                                <span class="work-tag">Conversion Rate</span>
+                                <span class="work-tag">Framer</span>
+                            </div>
+                        </div>
+                        <a href="#contact" class="btn-view-work">Request Case Study Demo &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section id="services">
+            <div class="section-header reveal-item">
+                <span class="section-tag">Core Expertise</span>
+                <h2>How I Help Your Business Grow</h2>
+                <p>Everything you need to launch a website that looks stunning and brings in revenue.</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-box spotlight-card reveal-item stagger-1">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                    </div>
+                    <h3>Modern Website &amp; UI Design</h3>
+                    <p>Clean, uncluttered layouts in Figma with generous whitespace and clear typography tailored to your exact brand identity.</p>
+                </div>
+                <div class="service-box spotlight-card reveal-item stagger-2">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+                    </div>
+                    <h3>Mobile Responsive Perfection</h3>
+                    <p>Over 60% of web traffic is mobile. Every page is meticulously designed to load fast and look flawless on all screens.</p>
+                </div>
+                <div class="service-box spotlight-card reveal-item stagger-3">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    </div>
+                    <h3>Developer-Ready Handoff</h3>
+                    <p>Built with proper Figma Auto-Layout, organized component systems, and export-ready SVG/PNG assets so your dev team builds fast.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section id="pricing">
+            <div class="section-header reveal-item">
+                <span class="section-tag">Transparent Investment</span>
+                <h2>Simple, Fixed-Price Packages</h2>
+                <p>No surprise hourly fees. Upfront pricing with fast 3 to 5 day turnarounds.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Package 1 Launch Special -->
+                <div class="pricing-card spotlight-card reveal-item stagger-1" style="border: 2px solid #ef4444; background: linear-gradient(180deg, #1f121d 0%, #0f1420 100%);">
+                    <div style="background: #ef4444; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; display: inline-block; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">LAUNCH SPECIAL (97% OFF)</div>
+                    <h3>Homepage Redesign</h3>
+                    <p>Exclusive promotional offer for the first 10 businesses to upgrade their site.</p>
+                    <div class="price">$9 <span style="text-decoration: line-through; color: #ef4444; margin-left: 8px; font-size: 18px;">$299</span></div>
+                    <ul class="features-list">
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Full Modern Homepage Redesign</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Desktop &amp; Mobile Responsive in Figma</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Clean Whitespace &amp; High-Converting Flow</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Fast 48-Hour Delivery</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Export-Ready Developer Assets</li>
+                    </ul>
+                    <a href="#contact" class="btn-pricing" style="background: #ef4444; border-color: #ef4444;">Claim $9 Offer Now</a>
+                </div>
+
+                <!-- Package 2 Featured -->
+                <div class="pricing-card spotlight-card featured reveal-item stagger-2">
+                    <div class="popular-badge">BEST VALUE</div>
+                    <h3>3-Page Core Website</h3>
+                    <p>Full redesign for Home, About Us, and Contact / Booking pages.</p>
+                    <div class="price">$199 <span style="text-decoration: line-through; color: #94a3b8; margin-left: 8px; font-size: 18px;">$599</span></div>
+                    <ul class="features-list">
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 3 Core Pages (Home, About, Contact)</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Desktop + Mobile Layouts in Figma</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Clickable Interactive Prototype</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mini Brand Style Guide &amp; Tokens</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Export-Ready Developer Assets</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 3&ndash;4 Days Delivery</li>
+                    </ul>
+                    <a href="#contact" class="btn-pricing btn-featured">Select Package</a>
+                </div>
+
+                <!-- Package 3 -->
+                <div class="pricing-card spotlight-card reveal-item stagger-3">
+                    <h3>Full Site Redesign</h3>
+                    <p>Complete multi-page revamp with live no-code deployment.</p>
+                    <div class="price">$399 <span style="text-decoration: line-through; color: #94a3b8; margin-left: 8px; font-size: 18px;">$1,199</span></div>
+                    <ul class="features-list">
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Up to 6 Custom Pages</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Full Design System &amp; Components</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Live Framer / Webflow Deployment</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> SEO &amp; Speed Optimization</li>
+                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Revisions until 100% happy</li>
+                    </ul>
+                    <a href="#contact" class="btn-pricing">Select Package</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form -->
+        <section id="contact">
+            <div class="contact-wrap spotlight-card reveal-item">
+                <div class="contact-info">
+                    <span class="section-tag">Let's Connect</span>
+                    <h2>Ready to Upgrade Your Website?</h2>
+                    <p>
+                        Tell me a bit about your business or share your existing website URL. 
+                        I will review it and send you a <strong>free visual concept &amp; mockup</strong> within 24 hours.
+                    </p>
+                    <div class="direct-email-box">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <div>
+                            <h4>Direct Inquiries</h4>
+                            <a href="mailto:rubanvelankanni8@gmail.com">rubanvelankanni8@gmail.com</a>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="contact-form" action="https://formsubmit.co/rubanvelankanni8@gmail.com" method="POST">
+                    <!-- FormSubmit Configuration -->
+                    <input type="hidden" name="_subject" value="[RUBAN-LEAD $9-SPECIAL] New Client Inquiry!">
+                    <input type="hidden" name="_captcha" value="false">
+                    
+                    <div class="form-row-2">
+                        <input type="text" name="name" placeholder="Your Name" required>
+                        <input type="email" name="email" placeholder="Your Email Address" required>
+                    </div>
+                    <div class="form-row-2">
+                        <input type="text" name="business" placeholder="Business Name or Niche">
+                        <input type="url" name="website" placeholder="Current Website (if any)">
+                    </div>
+                    <select name="package" required>
+                        <option value="Launch Special ($9 Homepage Redesign)" selected>Launch Special: Complete Homepage Redesign ($9)</option>
+                        <option value="3-Page Website ($199)">3-Page Core Website ($199)</option>
+                        <option value="Full Redesign ($399)">Full Multi-Page Redesign ($399)</option>
+                        <option value="Custom Project">Custom Project / Audit Consultation</option>
+                    </select>
+                    <textarea name="message" placeholder="Briefly describe what you would like to build or improve..." required></textarea>
+                    <button type="submit" class="btn-send">Claim $9 Redesign Concept &rarr;</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px;">
+            <img src="assets/rv-logo.svg" alt="RV Studio Monogram" style="height: 38px; width: auto; filter: drop-shadow(0 4px 10px rgba(225,29,72,0.3)); transition: transform 0.3s ease;" class="footer-monogram" />
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: #f8fafc;">RUBAN VELANKANNI</span>
+        </div>
+        <p>&copy; 2026 <strong>Ruban Velankanni</strong>. All rights reserved. &bull; Inquiries: <a href="mailto:rubanvelankanni8@gmail.com">rubanvelankanni8@gmail.com</a></p>
+    </footer>
+
+    <!-- Interactive Mouse Animation & Motion Controller -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if touch device
+            const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+            // ==========================================
+            // 1. Mouse Follower & Custom Cursor Physics
+            // ==========================================
+            const cursorDot = document.getElementById('cursorDot');
+            const cursorRing = document.getElementById('cursorRing');
+            const mouseGlowOrb = document.getElementById('mouseGlowOrb');
+
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            let ringX = mouseX;
+            let ringY = mouseY;
+            let glowX = mouseX;
+            let glowY = mouseY;
+            let isMouseMoving = false;
+
+            if (!isTouch && cursorDot && cursorRing && mouseGlowOrb) {
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+
+                    // Direct instant update for precision dot
+                    cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+
+                    if (!isMouseMoving) {
+                        isMouseMoving = true;
+                        cursorDot.classList.add('active');
+                        cursorRing.classList.add('active');
+                        mouseGlowOrb.classList.add('active');
+                    }
+                }, { passive: true });
+
+                // Damped Lerp Animation Loop
+                function updateFollowers() {
+                    if (isMouseMoving) {
+                        // Smooth ring follow (lerp 0.22)
+                        ringX += (mouseX - ringX) * 0.22;
+                        ringY += (mouseY - ringY) * 0.22;
+                        cursorRing.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+
+                        // Ambient light orb follow (silky lerp 0.08)
+                        glowX += (mouseX - glowX) * 0.08;
+                        glowY += (mouseY - glowY) * 0.08;
+                        mouseGlowOrb.style.transform = `translate(${glowX}px, ${glowY}px) translate(-50%, -50%)`;
+                    }
+                    requestAnimationFrame(updateFollowers);
+                }
+                requestAnimationFrame(updateFollowers);
+
+                // Cursor Hover Listeners on Links, Buttons, Inputs
+                const interactiveElements = document.querySelectorAll('a, button, input, select, textarea, .stat-item, .service-icon');
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+                });
+
+                // Case Study Card Special Cursor State
+                const workCards = document.querySelectorAll('.work-card');
+                workCards.forEach(card => {
+                    card.addEventListener('mouseenter', () => document.body.classList.add('cursor-card-hover'));
+                    card.addEventListener('mouseleave', () => document.body.classList.remove('cursor-card-hover'));
+                });
+
+                // Mouse Down / Up Tactile Shockwave
+                window.addEventListener('mousedown', (e) => {
+                    document.body.classList.add('cursor-clicking');
+
+                    // Spawn ripple shockwave
+                    const ripple = document.createElement('div');
+                    ripple.className = 'click-ripple';
+                    ripple.style.left = `${e.clientX}px`;
+                    ripple.style.top = `${e.clientY}px`;
+                    document.body.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 600);
+                });
+
+                window.addEventListener('mouseup', () => {
+                    document.body.classList.remove('cursor-clicking');
+                });
+
+                // Mouse Leave Window
+                document.addEventListener('mouseleave', () => {
+                    cursorDot.classList.remove('active');
+                    cursorRing.classList.remove('active');
+                    mouseGlowOrb.classList.remove('active');
+                    isMouseMoving = false;
+                });
+            }
+
+            // ==========================================
+            // 2. Interactive 3D Card Tilt on Mouse Move
+            // ==========================================
+            const tiltCards = document.querySelectorAll('.spotlight-card');
+            tiltCards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    // Update spotlight radial position
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+
+                    if (!isTouch) {
+                        // 3D Perspective Tilt Angle
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateX = ((y - centerY) / centerY) * -5;
+                        const rotateY = ((x - centerX) / centerX) * 5;
+
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-8px)`;
+                    }
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    if (!isTouch) {
+                        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+                    }
+                });
+            });
+
+            // ==========================================
+            // 3. Magnetic Button Hover Micro-Interaction
+            // ==========================================
+            if (!isTouch) {
+                const magneticButtons = document.querySelectorAll('.btn-main, .header-cta, .btn-pricing.btn-featured');
+                magneticButtons.forEach(btn => {
+                    btn.addEventListener('mousemove', (e) => {
+                        const rect = btn.getBoundingClientRect();
+                        const x = e.clientX - rect.left - rect.width / 2;
+                        const y = e.clientY - rect.top - rect.height / 2;
+                        btn.style.transform = `translate(${x * 0.16}px, ${y * 0.16}px) translateY(-3px) scale(1.02)`;
+                    });
+
+                    btn.addEventListener('mouseleave', () => {
+                        btn.style.transform = 'translate(0px, 0px) translateY(0px) scale(1)';
+                    });
+                });
+            }
+
+            // ==========================================
+            // 4. Dynamic Glassmorphic Header on Scroll
+            // ==========================================
+            const header = document.getElementById('mainHeader');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            }, { passive: true });
+
+            // ==========================================
+            // 5. Scroll-Driven Intersection Observer
+            // ==========================================
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -60px 0px',
+                threshold: 0.12
+            };
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal-item').forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            // ==========================================
+            // 6. Smooth Anchor Navigation with Offset
+            // ==========================================
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        e.preventDefault();
+                        const headerOffset = 90;
+                        const elementPosition = targetEl.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

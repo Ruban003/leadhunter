@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 180" width="340.0" height="180.0" fill="none">
+  <defs>
+    <!-- Dark Wine / Burgundy gradient for V arm -->
+    <linearGradient id="wine-grad-v" x1="90%" y1="0%" x2="10%" y2="100%">
+      <stop offset="0%" stop-color="#420b12" />
+      <stop offset="40%" stop-color="#581219" />
+      <stop offset="80%" stop-color="#460d14" />
+      <stop offset="100%" stop-color="#32060b" />
+    </linearGradient>
+
+    <!-- Burgundy to Crimson gradient for upper R loop -->
+    <linearGradient id="wine-grad-r" x1="0%" y1="0%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#521017" />
+      <stop offset="35%" stop-color="#6a151e" />
+      <stop offset="70%" stop-color="#8a1724" />
+      <stop offset="100%" stop-color="#aa1929" />
+    </linearGradient>
+
+    <!-- Radiant Crimson Red for the Front Folding Ribbon -->
+    <linearGradient id="crimson-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9e1624" />
+      <stop offset="25%" stop-color="#bf1828" />
+      <stop offset="65%" stop-color="#e31c30" />
+      <stop offset="100%" stop-color="#f22c42" />
+    </linearGradient>
+
+    <!-- Subtle 3D Crease Shadow where front ribbon overlays the right leg -->
+    <linearGradient id="crease-shadow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(20, 2, 5, 0.75)" />
+      <stop offset="100%" stop-color="rgba(20, 2, 5, 0)" />
+    </linearGradient>
+
+    <!-- Luxury Red Ambient Glow Filter -->
+    <filter id="rv-shadow" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#e11d48" flood-opacity="0.22" />
+    </filter>
+  </defs>
+
+  <g filter="url(#rv-shadow)">
+    <!-- 1. Right V Arm (Background Slanted Ribbon) -->
+    <!-- Runs from top right (279,1 to 332,1) down to bottom vertex (145,172 to 198,172) -->
+    <path d="M 279 1 
+             L 332 1 
+             L 198 172 
+             L 145 172 
+             Z" 
+          fill="url(#wine-grad-v)" />
+
+    <!-- 2. Crease shadow on the right leg just under the overlapping front ribbon -->
+    <path d="M 170 140 
+             L 204 140 
+             L 198 172 
+             L 145 172 
+             Z" 
+          fill="url(#crease-shadow)" 
+          opacity="0.6" />
+
+    <!-- 3. R Upper Loop (Burgundy to Crimson curved ribbon) -->
+    <!-- Starts at (1,1) to (121,1), curves through (195,45) to (195,78), then curves inward to (140,78), then back along inner edge to (38,45) -->
+    <path d="M 1 1 
+             L 121 1 
+             C 165 1, 195 20, 195 48 
+             C 195 68, 192 78, 185 88 
+             L 138 88 
+             C 144 78, 144 68, 144 54 
+             C 144 45, 140 45, 130 45 
+             L 38 45 
+             Z" 
+          fill="url(#wine-grad-r)" />
+
+    <!-- 4. R Middle Origami Transition Fold -->
+    <path d="M 38 45 
+             L 138 88 
+             L 71 85 
+             Z" 
+          fill="#66131c" />
+
+    <!-- 5. Front Radiant Ribbon (Left V / R Leg) -->
+    <!-- Runs from (71,85 to 124,85) down to (145,172 to 198,172) -->
+    <path d="M 71 85 
+             L 124 85 
+             L 198 172 
+             L 145 172 
+             Z" 
+          fill="url(#crimson-grad)" />
+
+    <!-- 6. Origami Fold Crease Line Accent -->
+    <line x1="124" y1="85" x2="71" y2="85" stroke="#ff4757" stroke-width="1.2" opacity="0.4" />
+    <line x1="145" y1="172" x2="198" y2="172" stroke="#ff4757" stroke-width="1.2" opacity="0.4" />
+  </g>
+</svg>
