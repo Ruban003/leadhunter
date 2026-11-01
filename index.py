@@ -1,6 +1,7 @@
 import http.server
 import json
 import urllib.parse
+import urllib.request
 import os
 import csv
 import io
@@ -253,7 +254,6 @@ class handler(http.server.BaseHTTPRequestHandler):
                 
             if webhook_url and payload_leads:
                 try:
-                    import urllib.request
                     req = urllib.request.Request(
                         webhook_url,
                         data=json.dumps({'leads': payload_leads}).encode('utf-8'),
