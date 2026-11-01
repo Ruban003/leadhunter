@@ -117,11 +117,41 @@ def audit_lead(lead: dict) -> dict:
         other_emails = [e for e in valid_emails if domain not in e]
         result['emails'] = domain_emails + other_emails
         
-        # 7. Extract US Phone Numbers
-        phones = re.findall(r'(?:\+?1[-. ]?)?\(?([2-9][0-9]{2})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})', text_content)
-        if phones:
-            p = phones[0]
-            result['phone'] = f"({p[0]}) {p[1]}-{p[2]}"
+        # 7. Extract Phone Numbers & WhatsApp (Support India +91, Landline, US, and direct tel: links)
+        # Check tel: links first
+        for a in soup.find_all('a', href=True):
+            href = a['href']
+            if href.startswith('tel:'):
+                tel_num = href.replace('tel:', '').strip()
+                if tel_num and len(re.sub(r'\D', '', tel_num)) >= 10:
+                    result['phone'] = tel_num
+                    break
+            elif 'wa.me/' in href or 'api.whatsapp.com/send' in href:
+                wa_match = re.search(r'(?:wa\.me/|phone=)(\+?\d+)', href)
+                if wa_match:
+                    result['phone'] = wa_match.group(1)
+                    break
+
+        if not result['phone']:
+            # Indian Mobile Numbers: +91 98xxx xxxxx, 98xxx xxxxx, 098xxx xxxxx
+            in_phones = re.findall(r'(?:(?:\+91|0)[\s.-]?)?([6-9]\d{4}[\s.-]?\d{5})', text_content)
+            if in_phones:
+                clean_in = re.sub(r'\D', '', in_phones[0])
+                if len(clean_in) == 10:
+                    result['phone'] = f"+91 {clean_in[:5]} {clean_in[5:]}"
+                else:
+                    result['phone'] = in_phones[0]
+            else:
+                # Bangalore / Indian Landline: 080-xxxxxxxx
+                landlines = re.findall(r'080[\s.-]?\d{7,8}', text_content)
+                if landlines:
+                    result['phone'] = landlines[0]
+                else:
+                    # US Phone Numbers
+                    us_phones = re.findall(r'(?:\+?1[-. ]?)?\(?([2-9][0-9]{2})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})', text_content)
+                    if us_phones:
+                        p = us_phones[0]
+                        result['phone'] = f"({p[0]}) {p[1]}-{p[2]}"
             
         # 8. Extract Social Media Links
         for a in soup.find_all('a', href=True):

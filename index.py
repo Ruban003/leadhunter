@@ -74,35 +74,70 @@ class handler(http.server.BaseHTTPRequestHandler):
         elif parsed.path == '/api/pitch':
             idx = int(params.get('idx', [0])[0])
             mockup_url = params.get('mockup_url', [''])[0]
+            lead = {}
             if 0 <= idx < len(CURRENT_LEADS):
-                lead = CURRENT_LEADS[idx]
-                pitch = generate_pitch(lead, mockup_url)
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps(pitch).encode('utf-8'))
-                return
+                lead = dict(CURRENT_LEADS[idx])
             else:
-                self.send_response(404)
-                self.end_headers()
-                return
+                # Support query fallback
+                if params.get('name'):
+                    lead['name'] = params.get('name')[0]
+                if params.get('city'):
+                    lead['city'] = params.get('city')[0]
+                if params.get('niche'):
+                    lead['niche'] = params.get('niche')[0]
+                if params.get('domain'):
+                    lead['domain'] = params.get('domain')[0]
+                if params.get('phone'):
+                    lead['phone'] = params.get('phone')[0]
+                if params.get('email'):
+                    lead['emails'] = [params.get('email')[0]]
+                if not lead.get('name'):
+                    lead = {'name': 'Business Team', 'city': 'Bangalore, Karnataka', 'niche': 'Luxury Salons & Spas', 'domain': 'business.com'}
+
+            pitch = generate_pitch(lead, mockup_url)
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps(pitch).encode('utf-8'))
+            return
 
         elif parsed.path.startswith('/mockup/'):
             try:
-                idx = int(parsed.path.split('/')[-1])
+                idx_str = parsed.path.split('/')[-1]
+                idx = int(idx_str) if idx_str.isdigit() else 0
+                lead = {}
                 if 0 <= idx < len(CURRENT_LEADS):
-                    lead = CURRENT_LEADS[idx]
-                    mockup_html = generate_mockup_html(lead)
-                    self.send_response(200)
-                    self.send_header('Content-Type', 'text/html; charset=utf-8')
-                    self.end_headers()
-                    self.wfile.write(mockup_html.encode('utf-8'))
-                    return
-            except Exception:
-                pass
-            self.send_response(404)
-            self.end_headers()
-            return
+                    lead = dict(CURRENT_LEADS[idx])
+                
+                # Query param fallback / overrides
+                if params.get('name'):
+                    lead['name'] = params.get('name')[0]
+                if params.get('city'):
+                    lead['city'] = params.get('city')[0]
+                if params.get('niche'):
+                    lead['niche'] = params.get('niche')[0]
+                if params.get('domain'):
+                    lead['domain'] = params.get('domain')[0]
+                if params.get('phone'):
+                    lead['phone'] = params.get('phone')[0]
+
+                if not lead.get('name'):
+                    lead = {'name': 'Luxe Hair & Spa Studio', 'city': 'Bangalore, Karnataka', 'niche': 'Luxury Salons & Spas', 'phone': '+91 80986 71563'}
+
+                mockup_html = generate_mockup_html(lead)
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(mockup_html.encode('utf-8'))
+                return
+            except Exception as e:
+                lead = {'name': 'Luxe Hair & Spa Studio', 'city': 'Bangalore, Karnataka', 'niche': 'Luxury Salons & Spas', 'phone': '+91 80986 71563'}
+                mockup_html = generate_mockup_html(lead)
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(mockup_html.encode('utf-8'))
+                return
 
         elif parsed.path == '/api/export':
             output = io.StringIO()

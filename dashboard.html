@@ -947,7 +947,7 @@
             <div class="metric-card">
                 <div class="metric-label">Pitches Ready</div>
                 <div class="metric-value" style="color: var(--primary);" id="metricPitches">0</div>
-                <div class="metric-sub">With $9 custom preview URLs</div>
+                <div class="metric-sub">With ₹2,999 Starter Launch URLs</div>
             </div>
         </section>
 
@@ -1025,11 +1025,15 @@
                 <div class="modal-action-btns">
                     <a id="btnWhatsApp" href="#" target="_blank" class="btn-modal-mail" style="background: #10b981; color: #fff; border-color: #10b981; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19.02L7.55 18.84L4.44 19.66L5.27 16.63L5.07 16.31C4.24 15 3.81 13.48 3.81 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
-                        <span>Send WhatsApp</span>
+                        <span id="btnWhatsAppText">Chat on WhatsApp</span>
+                    </a>
+                    <a id="btnGmail" href="#" target="_blank" class="btn-modal-mail" style="background: #ea4335; color: #fff; border-color: #ea4335; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        <span>Open in Gmail</span>
                     </a>
                     <a id="btnMailto" href="#" class="btn-modal-mail">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                        <span>Open Mail</span>
+                        <span>Default Mail</span>
                     </a>
                     <button class="btn-modal-copy" onclick="copyPitchText()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -1362,11 +1366,11 @@
                             <div class="actions-group">
                                 <button class="btn-table-pitch" onclick="openPitchModal(${origIdx})">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                                    <span>Pitch ($9)</span>
+                                    <span>Pitch (₹2,999)</span>
                                 </button>
-                                <a href="/mockup/${origIdx}" target="_blank" class="btn-table-preview">
+                                <a href="/mockup/${origIdx}?name=${encodeURIComponent(lead.name)}&city=${encodeURIComponent(lead.city)}&niche=${encodeURIComponent(lead.niche)}&domain=${encodeURIComponent(lead.domain)}&phone=${encodeURIComponent(lead.phone || '')}" target="_blank" class="btn-table-preview">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                    <span>Preview</span>
+                                    <span>Preview Concept</span>
                                 </a>
                             </div>
                         </td>
@@ -1380,19 +1384,38 @@
             const lead = rawLeads[idx];
             if (!lead) return;
 
-            const mockupUrl = window.location.origin + `/mockup/${idx}`;
-            fetch(`/api/pitch?idx=${idx}&mockup_url=${encodeURIComponent(mockupUrl)}`)
+            const mockupUrl = window.location.origin + `/mockup/${idx}?name=${encodeURIComponent(lead.name)}&city=${encodeURIComponent(lead.city)}&niche=${encodeURIComponent(lead.niche)}&domain=${encodeURIComponent(lead.domain)}&phone=${encodeURIComponent(lead.phone || '')}`;
+            
+            const pitchQuery = `idx=${idx}&mockup_url=${encodeURIComponent(mockupUrl)}&name=${encodeURIComponent(lead.name)}&city=${encodeURIComponent(lead.city)}&niche=${encodeURIComponent(lead.niche)}&domain=${encodeURIComponent(lead.domain)}&phone=${encodeURIComponent(lead.phone || '')}&email=${encodeURIComponent((lead.emails && lead.emails.length) ? lead.emails[0] : '')}`;
+
+            fetch(`/api/pitch?${pitchQuery}`)
                 .then(r => r.json())
                 .then(pitch => {
                     document.getElementById('modalRecipient').value = pitch.recipient;
                     document.getElementById('modalSubject').value = pitch.subject;
                     document.getElementById('modalBody').value = pitch.body;
 
-                    const mailtoUrl = `mailto:${encodeURIComponent(pitch.recipient)}?subject=${encodeURIComponent(pitch.subject)}&body=${encodeURIComponent(pitch.body)}`;
+                    // Direct Gmail link
+                    if (pitch.gmail_url) {
+                        document.getElementById('btnGmail').href = pitch.gmail_url;
+                    } else {
+                        const gUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(pitch.recipient)}&su=${encodeURIComponent(pitch.subject)}&body=${encodeURIComponent(pitch.body)}`;
+                        document.getElementById('btnGmail').href = gUrl;
+                    }
+
+                    // Native Mailto fallback
+                    const mailtoUrl = pitch.mailto_url || `mailto:${encodeURIComponent(pitch.recipient)}?subject=${encodeURIComponent(pitch.subject)}&body=${encodeURIComponent(pitch.body)}`;
                     document.getElementById('btnMailto').href = mailtoUrl;
 
+                    // Direct WhatsApp Web link
                     const waUrl = pitch.whatsapp_url || `https://web.whatsapp.com/send?text=${encodeURIComponent(pitch.whatsapp_body || pitch.body)}`;
                     document.getElementById('btnWhatsApp').href = waUrl;
+
+                    if (pitch.phone) {
+                        document.getElementById('btnWhatsAppText').innerText = `WhatsApp (${pitch.phone})`;
+                    } else {
+                        document.getElementById('btnWhatsAppText').innerText = 'Chat on WhatsApp';
+                    }
 
                     document.getElementById('pitchModal').style.display = 'flex';
                 })
