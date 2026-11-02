@@ -90,6 +90,8 @@ class handler(http.server.BaseHTTPRequestHandler):
                     lead['domain'] = params.get('domain')[0]
                 if params.get('phone'):
                     lead['phone'] = params.get('phone')[0]
+                if params.get('logo'):
+                    lead['logo_url'] = params.get('logo')[0]
                 if params.get('email'):
                     lead['emails'] = [params.get('email')[0]]
                 if not lead.get('name'):
@@ -121,6 +123,8 @@ class handler(http.server.BaseHTTPRequestHandler):
                     lead['domain'] = params.get('domain')[0]
                 if params.get('phone'):
                     lead['phone'] = params.get('phone')[0]
+                if params.get('logo'):
+                    lead['logo_url'] = params.get('logo')[0]
 
                 if not lead.get('name'):
                     lead = {'name': 'Luxe Hair & Spa Studio', 'city': 'Bangalore, Karnataka', 'niche': 'Luxury Salons & Spas', 'phone': '+91 80986 71563'}

@@ -19,13 +19,17 @@ if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
 from inspo_intelligence import get_inspo_for_niche, generate_inspo_badge_html
+from asset_extractor import extract_brand_assets
 
 def generate_mockup_html(lead: dict) -> str:
-    name = lead.get('name') or 'Luxe Studio'
-    city = lead.get('city') or 'Bangalore, Karnataka'
-    niche = lead.get('niche') or 'Dental & Aesthetic Clinics'
-    phone = lead.get('phone') or '+91 80986 71563'
     domain = lead.get('domain') or 'business.com'
+    scraped_assets = extract_brand_assets(domain) if domain else {}
+    
+    name = lead.get('name') or scraped_assets.get('name') or 'Luxe Studio'
+    city = lead.get('city') or scraped_assets.get('city') or 'Bangalore, Karnataka'
+    niche = lead.get('niche') or 'Dental & Aesthetic Clinics'
+    phone = lead.get('phone') or scraped_assets.get('phone') or '+91 80986 71563'
+    logo_url = lead.get('logo_url') or scraped_assets.get('logo_url') or ''
     requested_theme = lead.get('theme', '').lower()
     
     # Inspo Design Intelligence
@@ -310,9 +314,20 @@ def generate_mockup_html(lead: dict) -> str:
         </div>
         """
 
+    # Merge live scraped flaws if available
+    live_flaws = scraped_assets.get('flaws', [])
+    if live_flaws:
+        old_flaws = live_flaws
+
     # Comparison HTML
     comp_old_html = "".join([f'<li><span class="icon-cross">✕</span> {f}</li>' for f in old_flaws])
     comp_new_html = "".join([f'<li><span class="icon-check">✓</span> {f}</li>' for f in new_features])
+
+    # Logo HTML
+    if logo_url:
+        logo_html = f'<img src="{logo_url}" alt="{name}" style="height: 38px; max-height: 42px; width: auto; max-width: 220px; object-fit: contain; vertical-align: middle;">'
+    else:
+        logo_html = f'<span class="brand-dot"></span><span>{name}</span>'
 
     # WhatsApp Direct Link for Claiming
     wa_claim_text = urllib.parse.quote(f"Hi Ruban! I saw the modern website redesign concept for {name} ({city}) and want to claim the Starter Redesign Package.")
@@ -328,6 +343,7 @@ def generate_mockup_html(lead: dict) -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>{name} — Upgraded Digital Experience (Concept)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1038,8 +1054,7 @@ def generate_mockup_html(lead: dict) -> str:
     <!-- 2. Brand Navbar -->
     <header class="site-header">
         <a href="#" class="brand-logo">
-            <span class="brand-dot"></span>
-            <span>{name}</span>
+            {logo_html}
         </a>
         <nav>
             <ul class="nav-menu">
@@ -1127,16 +1142,19 @@ def generate_mockup_html(lead: dict) -> str:
             <div class="section-header">
                 <span class="section-tag">Direct Value Audit</span>
                 <h2>Why Upgrade With Ruban Designs</h2>
-                <p>Solving the exact mobile friction points currently losing you direct customer inquiries.</p>
+                <p>Solving the exact mobile friction points currently costing <strong>{domain}</strong> direct bookings.</p>
             </div>
 
             <div class="comparison-grid">
                 <div class="comp-card old">
-                    <span class="comp-badge old-b">Current Website Friction</span>
+                    <span class="comp-badge old-b">Current Website: {domain}</span>
                     <h3>What Might Be Costing You Clients</h3>
                     <ul class="comp-list">
                         {comp_old_html}
                     </ul>
+                    <div style="margin-top: 18px; padding-top: 12px; border-top: 1px dashed rgba(239, 68, 68, 0.35); font-size: 12px; color: #ef4444; display: flex; align-items: center; gap: 6px;">
+                        <span>⚠️</span> <span>Audited directly from live public domain: <code>{domain}</code></span>
+                    </div>
                 </div>
 
                 <div class="comp-card new">
@@ -1145,6 +1163,9 @@ def generate_mockup_html(lead: dict) -> str:
                     <ul class="comp-list">
                         {comp_new_html}
                     </ul>
+                    <div style="margin-top: 18px; padding-top: 12px; border-top: 1px dashed rgba(16, 185, 129, 0.35); font-size: 12px; color: #10b981; display: flex; align-items: center; gap: 6px;">
+                        <span>✓</span> <span>Optimized for sub-second mobile conversion &amp; direct WhatsApp concierges</span>
+                    </div>
                 </div>
             </div>
         </section>

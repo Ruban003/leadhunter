@@ -15,10 +15,14 @@ import os
 import json
 import urllib.request
 import urllib.parse
+import tempfile
 from typing import Dict, Any, Optional
 
-CACHE_DIR = os.path.join(os.path.dirname(__file__), "inspo_cache")
-os.makedirs(CACHE_DIR, exist_ok=True)
+try:
+    CACHE_DIR = os.path.join(tempfile.gettempdir(), "leadhunter_inspo_cache")
+    os.makedirs(CACHE_DIR, exist_ok=True)
+except Exception:
+    CACHE_DIR = None
 
 # Curated Fallback Matrix (Extracted directly from Inspo production screens)
 CURATED_BENCHMARKS = {
@@ -208,23 +212,25 @@ def get_inspo_for_niche(niche: str) -> Dict[str, Any]:
     else:
         category_key = "default"
 
-    cache_file = os.path.join(CACHE_DIR, f"{category_key}.json")
-    if os.path.exists(cache_file):
-        try:
-            with open(cache_file, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
+    if CACHE_DIR:
+        cache_file = os.path.join(CACHE_DIR, f"{category_key}.json")
+        if os.path.exists(cache_file):
+            try:
+                with open(cache_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
 
     # Use curated benchmark
     data = CURATED_BENCHMARKS[category_key]
     
     # Save to disk cache
-    try:
-        with open(cache_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
-    except Exception:
-        pass
+    if CACHE_DIR:
+        try:
+            with open(cache_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+        except Exception:
+            pass
 
     return data
 
