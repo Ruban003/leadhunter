@@ -45,7 +45,7 @@ def fetch_pipeline_rows():
     """Reads all rows from Google Sheet using gsheets CLI."""
     cmd_tsv = [GSHEETS_CMD, "readonly", "read", SPREADSHEET_ID, "Sheet1!A1:R100"]
     try:
-        res = subprocess.run(cmd_tsv, capture_output=True, text=True, check=True)
+        res = subprocess.run(cmd_tsv, capture_output=True, text=True, encoding='utf-8', errors='replace', check=True)
         lines = [line.split("\t") for line in res.stdout.splitlines() if line.strip()]
         return lines
     except Exception as e:
@@ -56,10 +56,10 @@ def update_gsheet_status(row_idx: int, new_status: str, note: str = ""):
     """Updates the status and notes cells for a specific row in Google Sheet."""
     cmd_status = [GSHEETS_CMD, "mutate", "write", SPREADSHEET_ID, f"Sheet1!B{row_idx}", new_status]
     try:
-        subprocess.run(cmd_status, capture_output=True, text=True, check=True)
+        subprocess.run(cmd_status, capture_output=True, text=True, encoding='utf-8', errors='replace', check=True)
         if note:
             cmd_note = [GSHEETS_CMD, "mutate", "write", SPREADSHEET_ID, f"Sheet1!R{row_idx}", note]
-            subprocess.run(cmd_note, capture_output=True, text=True)
+            subprocess.run(cmd_note, capture_output=True, text=True, encoding='utf-8', errors='replace')
         print(f"  [✓ SHEET UPDATED] Row {row_idx} status set to '{new_status}'")
     except Exception as e:
         print(f"  [!] Failed to update Sheet row {row_idx}: {e}")

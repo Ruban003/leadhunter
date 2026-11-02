@@ -17,10 +17,11 @@ AGGREGATORS = [
     'facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com',
     'forbes.com', 'mapquest.com', 'superpages.com', 'zoominfo.com',
     'usnews.com', 'healthgrades.com', 'zocdoc.com',
-    # Indian Aggregators & Directories
+    # Indian Aggregators, Directories & Excluded Domains
     'justdial.com', 'sulekha.com', 'indiamart.com', 'tradeindia.com',
     'practo.com', 'urbancompany.com', 'fresha.com', 'wedmegood.com',
-    'weddingwire.in', 'magicbricks.com', '99acres.com', 'quikr.com', 'olx.in'
+    'weddingwire.in', 'magicbricks.com', '99acres.com', 'quikr.com', 'olx.in',
+    'tripadvisor.in', 'tripadvisor.com', 'bodycraft.co.in', 'bodycraft.com'
 ]
 
 HEADERS = {
