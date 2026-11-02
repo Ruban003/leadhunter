@@ -46,17 +46,24 @@ def generate_mockup_html(lead: dict) -> str:
     # A. Dental, Orthodontics, Smile Care & Medical Clinics FIRST!
     if any(k in niche_lower for k in ['dent', 'ortho', 'smile', 'tooth', 'teeth', 'implant']) or ('clinic' in niche_lower and not any(s in niche_lower for s in ['salon', 'hair', 'spa'])):
         default_theme = "light"
-        accent_color = "#0284c7"           # Sky / Medical Cyan
-        accent_hover = "#0369a1"
-        accent_glow = "rgba(2, 132, 199, 0.25)"
-        gold_accent = "#0284c7"
-        hero_img = "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
-        badge = f"Painless Digital Healthcare & Aesthetics • {city}"
-        headline = f"World-Class Dentistry & Smile Artistry in {city}"
-        subhead = "Experience pain-free digital dentistry, 3D smile design, and compassionate dental care designed around your comfort. Open daily 9:00 AM – 10:00 PM."
+        accent_color = scraped_assets.get('primary_color') or "#143d34"           # Forest Green / Medical Pine
+        accent_hover = "#0f2e27"
+        accent_glow = "rgba(20, 61, 52, 0.25)"
+        gold_accent = scraped_assets.get('gold_color') or "#c5a059"               # Warm Tooth Gold
+        hero_img = scraped_assets.get('hero_img') or "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1200&q=80"
+        hours_str = scraped_assets.get('hours') or "Open Daily • 9:00 AM – 10:00 PM"
+        badge = f"{hours_str} • {city}"
+        headline = scraped_assets.get('headline') or f"Multi-Specialty Dental Clinic in {city}"
+        subhead = scraped_assets.get('subhead') or "State-of-the-art digital dental care with cutting-edge technology — serving Koramangala, Harlur Road, and Sarjapur, Bengaluru."
+        font_heading = scraped_assets.get('font_family') or "'Playfair Display', Georgia, serif"
         service_menu_label = "Dental Treatments"
         booking_heading = "Book Your Dental Appointment"
         booking_subhead = "Select your treatment and preferred time slot for instant doctor WhatsApp confirmation."
+        trust_bullets = [
+            "Direct Doctor WhatsApp Confirmation",
+            "Surgical Layout (Zero Button Overlap)",
+            "Painless Digital 3D Dental Care"
+        ]
         
         services = [
             {
@@ -107,12 +114,19 @@ def generate_mockup_html(lead: dict) -> str:
         accent_glow = "rgba(225, 29, 72, 0.25)"
         gold_accent = "#d4af37"
         hero_img = "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80"
-        badge = f"Bengaluru's Premier Luxury Sanctuary • {city}"
+        hours_str = scraped_assets.get('hours') or "Open Daily • 10:00 AM – 9:00 PM"
+        badge = f"{hours_str} • {city}"
         headline = f"Redefining Beauty, Hair & Radiance in {city}"
         subhead = "Experience bespoke styling, French balayage, and clinical skincare in a serene boutique haven. Book directly on WhatsApp without third-party aggregator fees."
+        font_heading = "'Playfair Display', Georgia, serif"
         service_menu_label = "Treatment Menu"
         booking_heading = "Reserve Your VIP Slot"
         booking_subhead = "Select your service, stylist preference, and preferred time slot for instant WhatsApp booking."
+        trust_bullets = [
+            "100% Direct WhatsApp VIP Booking",
+            "Zero Aggregator Commission Cuts",
+            "Certified Master Stylists & Estheticians"
+        ]
         
         services = [
             {
@@ -163,12 +177,19 @@ def generate_mockup_html(lead: dict) -> str:
         accent_glow = "rgba(234, 88, 12, 0.25)"
         gold_accent = "#d97706"
         hero_img = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80"
-        badge = f"Artisanal Culinary Destination • {city}"
+        hours_str = scraped_assets.get('hours') or "Open Daily • 12:00 PM – 11:30 PM"
+        badge = f"{hours_str} • {city}"
         headline = f"Exquisite Dining & Crafted Flavors in {city}"
         subhead = "Fresh seasonal ingredients, hand-tossed artisan recipes, and bespoke mixology. Reserve your private dining table instantly on WhatsApp."
+        font_heading = "'Playfair Display', Georgia, serif"
         service_menu_label = "Signature Menu"
         booking_heading = "Reserve Your Dining Table"
         booking_subhead = "Select your party size and preferred dining slot for instant WhatsApp table confirmation."
+        trust_bullets = [
+            "Instant 1-Tap Weekend Table RSVP",
+            "Zero Aggregator App Delivery Cuts",
+            "Chef's Handcrafted Seasonal Menu"
+        ]
         
         services = [
             {
@@ -219,12 +240,19 @@ def generate_mockup_html(lead: dict) -> str:
         accent_glow = "rgba(15, 23, 42, 0.2)"
         gold_accent = "#d97706"
         hero_img = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
-        badge = f"Award-Winning Luxury Architecture • {city}"
+        hours_str = scraped_assets.get('hours') or "Mon – Sat • 9:30 AM – 6:30 PM"
+        badge = f"{hours_str} • {city}"
         headline = f"Bespoke Interior Architecture & Luxury Design in {city}"
         subhead = "Crafting timeless residential sanctuaries and commercial spaces with architectural precision, sustainable materials, and turnkey execution."
+        font_heading = "'Space Grotesk', -apple-system, sans-serif"
         service_menu_label = "Design Portfolio"
         booking_heading = "Request Architectural Consultation"
         booking_subhead = "Share your project scope, sq.ft requirements, and preferred date for a direct consultation."
+        trust_bullets = [
+            "Direct Turnkey Architectural Consultation",
+            "Photorealistic 3D Spatial Walkthroughs",
+            "Transparent BOQ Material Assurance"
+        ]
         
         services = [
             {
@@ -323,6 +351,9 @@ def generate_mockup_html(lead: dict) -> str:
     comp_old_html = "".join([f'<li><span class="icon-cross">✕</span> {f}</li>' for f in old_flaws])
     comp_new_html = "".join([f'<li><span class="icon-check">✓</span> {f}</li>' for f in new_features])
 
+    # Trust Strip Bullets HTML
+    trust_bullets_html = "".join([f'<div class="trust-item"><span class="trust-icon">✓</span> {b}</div>' for b in trust_bullets])
+
     # Logo HTML
     if logo_url:
         logo_html = f'<img src="{logo_url}" alt="{name}" style="height: 38px; max-height: 42px; width: auto; max-width: 220px; object-fit: contain; vertical-align: middle;">'
@@ -347,7 +378,7 @@ def generate_mockup_html(lead: dict) -> str:
     <title>{name} — Upgraded Digital Experience (Concept)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
             /* Light Theme (Default for Clinical, Healthcare & Premium Local Businesses) */
@@ -360,6 +391,7 @@ def generate_mockup_html(lead: dict) -> str:
             --accent: {accent_color};
             --accent-hover: {accent_hover};
             --gold: {gold_accent};
+            --font-heading: {font_heading};
             --text-heading: #0f172a;
             --text-body: #334155;
             --text-muted: #64748b;
@@ -382,6 +414,7 @@ def generate_mockup_html(lead: dict) -> str:
             --accent: {accent_color};
             --accent-hover: {accent_hover};
             --gold: {gold_accent};
+            --font-heading: {font_heading};
             --text-heading: #ffffff;
             --text-body: #f8fafc;
             --text-muted: #94a3b8;
@@ -482,6 +515,60 @@ def generate_mockup_html(lead: dict) -> str:
         }}
         .btn-theme-toggle:hover {{ background: rgba(255,255,255,0.25); }}
 
+        /* Business Announcement Strip */
+        .business-announcement-bar {{
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 12.5px;
+            font-weight: 600;
+            padding: 8px 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            letter-spacing: 0.02em;
+        }}
+        .announcement-content {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }}
+        .announcement-content a {{
+            color: #ffffff;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }}
+        .announcement-sep {{
+            opacity: 0.6;
+        }}
+
+        /* Emergency Action Pill in Navbar */
+        .btn-emergency-pill {{
+            background: transparent;
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }}
+        .btn-emergency-pill:hover {{
+            background: var(--accent);
+            color: #ffffff;
+        }}
+        [data-theme="dark"] .btn-emergency-pill {{
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }}
+        [data-theme="dark"] .btn-emergency-pill:hover {{
+            background: rgba(255, 255, 255, 0.15);
+        }}
+
         /* 2. Brand Navbar */
         .site-header {{
             background: var(--header-bg);
@@ -563,85 +650,118 @@ def generate_mockup_html(lead: dict) -> str:
         /* 3. Hero Section */
         .hero-section {{
             position: relative;
-            padding: 70px 40px 90px;
+            padding: 60px 40px 80px;
             max-width: 1320px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
-            gap: 50px;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 48px;
             align-items: center;
         }}
         .hero-badge {{
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #e0f2fe;
-            border: 1px solid #bae6fd;
+            background: rgba(20, 61, 52, 0.08);
+            border: 1px solid rgba(20, 61, 52, 0.18);
             padding: 7px 16px;
             border-radius: 9999px;
             font-size: 13px;
             font-weight: 600;
-            color: #0369a1;
+            color: var(--accent);
             margin-bottom: 22px;
         }}
         [data-theme="dark"] .hero-badge {{
-            background: rgba(2, 132, 199, 0.15);
-            border-color: rgba(2, 132, 199, 0.3);
-            color: #38bdf8;
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
         }}
         .hero-title {{
+            font-family: var(--font-heading);
             font-size: 46px;
-            font-weight: 800;
+            font-weight: 700;
             line-height: 1.15;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.02em;
             margin-bottom: 20px;
-            color: var(--text-heading);
+            color: var(--accent);
+        }}
+        [data-theme="dark"] .hero-title {{
+            color: #ffffff;
         }}
         .hero-sub {{
-            font-size: 17px;
+            font-size: 16.5px;
             color: var(--text-muted);
             line-height: 1.6;
-            margin-bottom: 32px;
-            max-width: 600px;
+            margin-bottom: 30px;
+            max-width: 620px;
         }}
         .hero-btn-row {{
             display: flex;
-            gap: 16px;
+            gap: 14px;
             align-items: center;
-            margin-bottom: 36px;
+            margin-bottom: 34px;
             flex-wrap: wrap;
         }}
-        .btn-hero-primary {{
-            background: var(--accent);
+        .btn-hero-whatsapp {{
+            background: #10b981;
             color: #fff;
-            padding: 14px 30px;
+            padding: 13px 24px;
             border-radius: var(--radius-md);
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 4px 16px var(--border-glow);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.28);
             transition: all 0.2s;
         }}
-        .btn-hero-primary:hover {{ background: var(--accent-hover); transform: translateY(-2px); }}
-        .btn-hero-secondary {{
+        .btn-hero-whatsapp:hover {{
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.38);
+        }}
+        .btn-hero-emergency {{
             background: var(--bg-surface);
-            border: 1px solid var(--border-hairline);
-            color: var(--text-heading);
-            padding: 14px 24px;
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            padding: 13px 20px;
             border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 15px;
+            font-weight: 700;
+            font-size: 14px;
             text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.2s;
         }}
-        .btn-hero-secondary:hover {{ background: var(--bg-card-hover); }}
+        .btn-hero-emergency:hover {{
+            background: var(--accent);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }}
+        [data-theme="dark"] .btn-hero-emergency {{
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }}
+        .btn-hero-audit {{
+            background: transparent;
+            color: var(--text-muted);
+            padding: 13px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s;
+        }}
+        .btn-hero-audit:hover {{
+            color: var(--accent);
+        }}
 
         .trust-strip {{
             display: flex;
-            gap: 24px;
+            gap: 20px;
             padding-top: 24px;
             border-top: 1px solid var(--border-hairline);
             flex-wrap: wrap;
@@ -657,6 +777,115 @@ def generate_mockup_html(lead: dict) -> str:
         .trust-icon {{
             color: #10b981;
             font-weight: 900;
+        }}
+
+        /* Hero Photo Visual Card */
+        .hero-photo-container {{
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }}
+        .hero-bg-dots {{
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 200px;
+            height: 200px;
+            background-image: radial-gradient(var(--accent) 2px, transparent 2px);
+            background-size: 16px 16px;
+            opacity: 0.16;
+            z-index: 0;
+            border-radius: 16px;
+        }}
+        .hero-photo-card {{
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 22px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            padding: 10px;
+            box-shadow: 0 20px 45px -10px var(--border-glow);
+            z-index: 1;
+        }}
+        .hero-patient-img {{
+            width: 100%;
+            height: 460px;
+            object-fit: cover;
+            border-radius: 16px;
+            display: block;
+        }}
+        .floating-chip {{
+            position: absolute;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.15);
+            border-radius: 14px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+            transition: transform 0.25s ease;
+        }}
+        .floating-chip:hover {{
+            transform: translateY(-2px);
+        }}
+        .chip-top {{
+            top: 24px;
+            right: -20px;
+        }}
+        .chip-bottom {{
+            bottom: 24px;
+            left: -20px;
+        }}
+        .chip-star {{
+            font-size: 20px;
+            color: #f59e0b;
+        }}
+        .chip-icon {{
+            font-size: 20px;
+            color: #10b981;
+        }}
+        .floating-chip strong {{
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-heading);
+            line-height: 1.2;
+        }}
+        .floating-chip small {{
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+        }}
+
+        /* Dedicated Booking Section */
+        .booking-section-wrapper {{
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-hairline);
+            border-bottom: 1px solid var(--border-hairline);
+            padding: 80px 30px;
+        }}
+        .booking-container {{
+            max-width: 720px;
+            margin: 0 auto;
+        }}
+        .booking-header {{
+            text-align: center;
+            margin-bottom: 34px;
+        }}
+        .booking-header h2 {{
+            font-family: var(--font-heading);
+            font-size: 34px;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin-bottom: 10px;
+        }}
+        .booking-header p {{
+            font-size: 15px;
+            color: var(--text-muted);
         }}
 
         /* Interactive Booking Console Card */
@@ -1017,12 +1246,17 @@ def generate_mockup_html(lead: dict) -> str:
 
         @media (max-width: 1024px) {{
             .hero-section {{ grid-template-columns: 1fr; padding: 40px 20px; }}
+            .hero-title {{ font-size: 34px; }}
+            .hero-patient-img {{ height: 340px; }}
+            .chip-top {{ top: 12px; right: 12px; }}
+            .chip-bottom {{ bottom: 12px; left: 12px; }}
+            .btn-emergency-pill {{ display: none; }}
+            .business-announcement-bar {{ font-size: 11px; padding: 6px 14px; }}
             .comparison-grid {{ grid-template-columns: 1fr; }}
             .services-grid {{ grid-template-columns: 1fr; }}
             .reviews-grid {{ grid-template-columns: 1fr; }}
             .site-header {{ padding: 14px 20px; }}
             .nav-menu {{ display: none; }}
-            .hero-title {{ font-size: 34px; }}
         }}
     </style>
 </head>
@@ -1051,6 +1285,17 @@ def generate_mockup_html(lead: dict) -> str:
         </div>
     </aside>
 
+    <!-- Announcement Bar -->
+    <div class="business-announcement-bar">
+        <div class="announcement-content">
+            <span>⏰ {hours_str}</span>
+            <span class="announcement-sep">•</span>
+            <span>📍 {city}</span>
+            <span class="announcement-sep">•</span>
+            <span>📞 Direct: <a href="tel:{clean_phone_digits}">{phone}</a></span>
+        </div>
+    </div>
+
     <!-- 2. Brand Navbar -->
     <header class="site-header">
         <a href="#" class="brand-logo">
@@ -1065,6 +1310,9 @@ def generate_mockup_html(lead: dict) -> str:
             </ul>
         </nav>
         <div class="header-actions">
+            <a href="tel:{clean_phone_digits}" class="btn-emergency-pill">
+                <span>Emergency: {phone}</span>
+            </a>
             <a href="{wa_cust_url}" target="_blank" class="btn-whatsapp-pill">
                 <span class="pulse-dot"></span>
                 <span>Book on WhatsApp</span>
@@ -1075,65 +1323,52 @@ def generate_mockup_html(lead: dict) -> str:
     <main>
         <!-- 3. Hero Section -->
         <section class="hero-section">
-            <div>
+            <div class="hero-content-col">
                 <div class="hero-badge">
-                    <span>★ 4.9 Rating (240+ Google Reviews)</span> • <span>{badge}</span>
+                    <span>★ 4.9 Rating (240+ Google Reviews)</span> • <span>{hours_str}</span>
                 </div>
                 <h1 class="hero-title">{headline}</h1>
                 <p class="hero-sub">{subhead}</p>
 
                 <div class="hero-btn-row">
-                    <a href="#booking" class="btn-hero-primary">
-                        <span>Book Instant Slot</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <a href="{wa_cust_url}" target="_blank" class="btn-hero-whatsapp">
+                        <span class="pulse-dot"></span>
+                        <span>Book on WhatsApp</span>
                     </a>
-                    <a href="{wa_cust_url}" target="_blank" class="btn-hero-secondary">
-                        <span>Chat on WhatsApp</span>
+                    <a href="tel:{clean_phone_digits}" class="btn-hero-emergency">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <span>Emergency: {phone}</span>
+                    </a>
+                    <a href="#comparison" class="btn-hero-audit">
+                        <span>View UI Audit ↓</span>
                     </a>
                 </div>
 
                 <div class="trust-strip">
-                    <div class="trust-item"><span class="trust-icon">✓</span> Direct WhatsApp Confirmation</div>
-                    <div class="trust-item"><span class="trust-icon">✓</span> Zero Middleman Aggregator Cuts</div>
-                    <div class="trust-item"><span class="trust-icon">✓</span> Certified Master Specialists</div>
+                    {trust_bullets_html}
                 </div>
             </div>
 
-            <!-- Interactive Booking Console Card -->
-            <div class="booking-card" id="booking">
-                <h3>{booking_heading}</h3>
-                <p>{booking_subhead}</p>
-
-                <form onsubmit="handleCustomerBooking(event)">
-                    <div class="booking-field">
-                        <label>Select Service / Treatment</label>
-                        <select class="booking-select" id="serviceSelect" required>
-                            <option value="{services[0]['title']} ({services[0]['price']})">{services[0]['title']} — {services[0]['price']}</option>
-                            <option value="{services[1]['title']} ({services[1]['price']})">{services[1]['title']} — {services[1]['price']}</option>
-                            <option value="{services[2]['title']} ({services[2]['price']})">{services[2]['title']} — {services[2]['price']}</option>
-                        </select>
-                    </div>
-
-                    <div class="booking-field">
-                        <label>Your Name & Contact</label>
-                        <input type="text" class="booking-input" id="custName" placeholder="Full Name" required>
-                    </div>
-
-                    <div class="booking-field">
-                        <label>Preferred Time Slot (Today / Tomorrow)</label>
-                        <div class="time-slot-grid">
-                            <div class="time-pill active" onclick="selectTime(this)">11:00 AM</div>
-                            <div class="time-pill" onclick="selectTime(this)">02:30 PM</div>
-                            <div class="time-pill" onclick="selectTime(this)">05:00 PM</div>
-                            <div class="time-pill" onclick="selectTime(this)">07:30 PM</div>
+            <!-- Hero Photo Card (Authentic Visual matching client website) -->
+            <div class="hero-photo-container">
+                <div class="hero-bg-dots"></div>
+                <div class="hero-photo-card">
+                    <img src="{hero_img}" alt="{name} Experience" class="hero-patient-img">
+                    <div class="floating-chip chip-top">
+                        <span class="chip-star">★</span>
+                        <div>
+                            <strong>4.9 / 5.0 Rating</strong>
+                            <small>240+ Verified Reviews</small>
                         </div>
                     </div>
-
-                    <button type="submit" class="btn-confirm-wa">
-                        <span>Confirm Slot on WhatsApp</span>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </form>
+                    <div class="floating-chip chip-bottom">
+                        <span class="chip-icon">⚡</span>
+                        <div>
+                            <strong>Sub-Second Speed: 0.8s</strong>
+                            <small>Zero Overlapping UI Flaws</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1166,6 +1401,50 @@ def generate_mockup_html(lead: dict) -> str:
                     <div style="margin-top: 18px; padding-top: 12px; border-top: 1px dashed rgba(16, 185, 129, 0.35); font-size: 12px; color: #10b981; display: flex; align-items: center; gap: 6px;">
                         <span>✓</span> <span>Optimized for sub-second mobile conversion &amp; direct WhatsApp concierges</span>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Dedicated Interactive Booking Console -->
+        <section class="booking-section-wrapper" id="booking">
+            <div class="booking-container">
+                <div class="booking-header">
+                    <span class="section-tag">Instant Priority Scheduling</span>
+                    <h2>{booking_heading}</h2>
+                    <p>{booking_subhead}</p>
+                </div>
+
+                <div class="booking-card">
+                    <form onsubmit="handleCustomerBooking(event)">
+                        <div class="booking-field">
+                            <label>Select Service / Treatment</label>
+                            <select class="booking-select" id="serviceSelect" required>
+                                <option value="{services[0]['title']} ({services[0]['price']})">{services[0]['title']} — {services[0]['price']}</option>
+                                <option value="{services[1]['title']} ({services[1]['price']})">{services[1]['title']} — {services[1]['price']}</option>
+                                <option value="{services[2]['title']} ({services[2]['price']})">{services[2]['title']} — {services[2]['price']}</option>
+                            </select>
+                        </div>
+
+                        <div class="booking-field">
+                            <label>Your Name & Contact</label>
+                            <input type="text" class="booking-input" id="custName" placeholder="Full Name" required>
+                        </div>
+
+                        <div class="booking-field">
+                            <label>Preferred Time Slot (Today / Tomorrow)</label>
+                            <div class="time-slot-grid">
+                                <div class="time-pill active" onclick="selectTime(this)">11:00 AM</div>
+                                <div class="time-pill" onclick="selectTime(this)">02:30 PM</div>
+                                <div class="time-pill" onclick="selectTime(this)">05:00 PM</div>
+                                <div class="time-pill" onclick="selectTime(this)">07:30 PM</div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-confirm-wa">
+                            <span>Confirm Slot on WhatsApp</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </form>
                 </div>
             </div>
         </section>

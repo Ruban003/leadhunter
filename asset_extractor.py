@@ -35,15 +35,21 @@ KNOWN_ASSETS = {
         "logo_url": "https://aestheticadvanceddental.com/wp-content/uploads/2026/09/AA-Dental-logo-Light-1024x207.png",
         "phone": "+91 86603 51505",
         "city": "Koramangala & Harlur Road, Bengaluru",
+        "primary_color": "#143d34",
+        "accent_color": "#143d34",
+        "gold_color": "#c5a059",
+        "font_family": "'Playfair Display', Georgia, serif",
         "headline": "Multi-Specialty Dental Clinic in Koramangala & Harlur Road",
-        "hours": "Open daily 9:00 AM – 10:00 PM",
+        "subhead": "State-of-the-art digital dental care with cutting-edge technology — serving Koramangala, Harlur Road, and Sarjapur, Bengaluru. Open daily 9:00 AM – 10:00 PM.",
+        "hours": "Open Daily • 9:00 AM – 10:00 PM",
+        "hero_img": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1200&q=80",
         "cms": "WordPress",
         "html_size_kb": 278,
         "flaws": [
-            "Heavy 278 KB WordPress page weight causing high mobile bounce rate (>4.2s load)",
-            "Pinch-to-zoom required on smartphones to find clinic phone number",
-            "Missing direct 1-tap WhatsApp consultation or doctor appointment booking",
-            "Lack of interactive before/after smile transformations and patient review gallery"
+            "Floating 'Call Us' & 'WhatsApp' buttons clumsily overlap and block the hero text and imagery",
+            "Heavy 278 KB WordPress Elementor bundle causing high mobile bounce rate (>4.2s load)",
+            "Pinch-to-zoom required on smartphones to locate clinic emergency contact",
+            "Missing interactive treatment menu and transparent digital doctor slot booking"
         ],
         "treatments": [
             "Dental Implants & 3D Reconstruction",
