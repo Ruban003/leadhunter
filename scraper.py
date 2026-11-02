@@ -1,7 +1,8 @@
 """
 Lead Hunter Agent - Scraper Module
-Searches for genuine US local businesses across high-ticket niches and cities.
-Excludes aggregators (Yelp, Angi, etc.) and gathers direct business domains.
+Searches for genuine Bangalore / Indian local businesses across high-ticket niches.
+Excludes aggregators, directories, and day-job domains (Bodycraft).
+Extracts clean, genuine brand names.
 """
 
 import urllib.parse
@@ -21,7 +22,8 @@ AGGREGATORS = [
     'justdial.com', 'sulekha.com', 'indiamart.com', 'tradeindia.com',
     'practo.com', 'urbancompany.com', 'fresha.com', 'wedmegood.com',
     'weddingwire.in', 'magicbricks.com', '99acres.com', 'quikr.com', 'olx.in',
-    'tripadvisor.in', 'tripadvisor.com', 'bodycraft.co.in', 'bodycraft.com'
+    'tripadvisor.in', 'tripadvisor.com', 'hexahealth.com', 'lybrate.com', 'credihealth.com',
+    'bodycraft.co.in', 'bodycraft.com'
 ]
 
 HEADERS = {
@@ -43,16 +45,54 @@ def is_aggregator(domain: str) -> bool:
     dom = domain.lower()
     return any(agg in dom for agg in AGGREGATORS)
 
+def clean_brand_name(raw_title: str, domain: str) -> str:
+    """
+    Extracts the actual brand name rather than SEO keyword strings.
+    E.g. 'Dentist in Koramangala & Harlur Road - Aesthetic Advanced Dental' -> 'Aesthetic Advanced Dental'
+    """
+    # 1. Clean domain fallback stem
+    domain_stem = domain.split('.')[0].replace('-', ' ').replace('_', ' ')
+    # Capitalize standard domain name (e.g. 'aadhyadentalcare' -> 'Aadhya Dental Care')
+    # Use word boundary replacements for common suffixes
+    domain_brand = domain_stem
+    for word in ['dental', 'clinic', 'salon', 'spa', 'studio', 'care', 'couture', 'interiors', 'design', 'cafe']:
+        domain_brand = re.sub(rf'\b{word}\b', f' {word.capitalize()}', domain_brand, flags=re.IGNORECASE)
+    domain_brand = " ".join([w.capitalize() for w in domain_brand.split()])
+    
+    if not raw_title:
+        return domain_brand
+
+    # Split title on separators
+    parts = [p.strip() for p in re.split(r'[-–|•:]', raw_title) if p.strip()]
+    if not parts:
+        return domain_brand
+
+    # Filter out parts that are clearly SEO keyword spam
+    seo_keywords = ['best', 'top', 'near me', 'in bangalore', 'in bengaluru', 'in koramangala', 'in indiranagar', 'in hsr', 'dentist in', 'salon in', 'clinic in', 'reviews', 'ratings']
+    good_candidates = []
+    for p in parts:
+        p_lower = p.lower()
+        if not any(k in p_lower for k in seo_keywords) and len(p) >= 3 and len(p) <= 40:
+            good_candidates.append(p)
+            
+    if good_candidates:
+        # Prefer candidate that matches domain words
+        for c in good_candidates:
+            if any(w in domain.lower() for w in c.lower().split() if len(w) > 3):
+                return c
+        return good_candidates[0]
+        
+    return domain_brand
+
 def search_leads(niche: str, city: str, limit: int = 10) -> list:
     """
-    Search DuckDuckGo Lite for direct business websites in a specific US city and niche.
+    Search DuckDuckGo Lite for direct business websites in a specific city and niche.
     Returns list of dicts: {'name': ..., 'url': ..., 'domain': ..., 'niche': ..., 'city': ...}
     """
     query = f"{niche} in {city}"
     leads = []
     seen_domains = set()
     
-    # We query up to 2 pages if needed
     for page_idx in range(2):
         if len(leads) >= limit:
             break
@@ -85,13 +125,7 @@ def search_leads(niche: str, city: str, limit: int = 10) -> list:
                     continue
                     
                 seen_domains.add(domain)
-                
-                # Clean up business name from title
-                # E.g. "Austin Roofing and Construction - Best Roofers in Austin" -> "Austin Roofing and Construction"
-                clean_name = re.split(r'[-–|•:]', title)[0].strip()
-                if not clean_name or len(clean_name) < 3:
-                    clean_name = domain.split('.')[0].replace('-', ' ').title()
-                    
+                clean_name = clean_brand_name(title, domain)
                 snippet_text = snippets[idx].get_text(strip=True) if idx < len(snippets) else ""
                 
                 leads.append({
@@ -103,15 +137,9 @@ def search_leads(niche: str, city: str, limit: int = 10) -> list:
                     'city': city
                 })
                 
-            time.sleep(1) # respectful pause
+            time.sleep(1)
         except Exception as e:
             print(f"Scraper error: {e}")
             break
             
     return leads
-
-if __name__ == "__main__":
-    test_results = search_leads("Roofing", "Austin TX", limit=5)
-    print(f"Found {len(test_results)} leads:")
-    for l in test_results:
-        print(f" - {l['name']} ({l['domain']}) -> {l['url']}")
