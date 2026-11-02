@@ -1,28 +1,101 @@
 """
-Lead Hunter Agent - Modern Luxury Mockup Preview Generator
-Generates an interactive, award-winning luxury redesign preview for any prospective business.
-Tailored for Indian Metros (Bengaluru) & Global targets with realistic INR pricing and WhatsApp booking.
+Lead Hunter Agent - Modern Luxury Mockup Preview Generator (Theme-Aware & Industry Authentic)
+Generates an interactive, award-winning redesign preview for prospective businesses.
+Features:
+- Pristine Clinical Light Theme for Dental, Medical & Aesthetic Healthcare Clinics
+- Warm Luxury Ivory Theme for Salons & Spas
+- Editorial Minimalist Theme for Architecture & Interior Design
+- Real industry treatment menus, transparent pricing, and 1-tap WhatsApp booking
+- Dynamic Light/Dark mode switcher
 """
 import urllib.parse
+import re
 
 def generate_mockup_html(lead: dict) -> str:
     name = lead.get('name') or 'Luxe Studio'
     city = lead.get('city') or 'Bangalore, Karnataka'
-    niche = lead.get('niche') or 'Luxury Salons & Spas'
+    niche = lead.get('niche') or 'Dental & Aesthetic Clinics'
     phone = lead.get('phone') or '+91 80986 71563'
     domain = lead.get('domain') or 'business.com'
+    requested_theme = lead.get('theme', '').lower()
     
     niche_lower = niche.lower()
     
-    # 1. Curated Luxury Photography & Content Matrix
-    if any(k in niche_lower for k in ['salon', 'hair', 'spa', 'beauty', 'bridal', 'makeover', 'lash', 'nail', 'aesthet']):
-        accent_color = "#e11d48"
-        accent_glow = "rgba(225, 29, 72, 0.35)"
+    # -------------------------------------------------------------
+    # 1. Industry-Specific Content & Theme Matrix
+    # -------------------------------------------------------------
+    
+    # A. Dental, Orthodontics, Smile Care & Medical Clinics FIRST!
+    if any(k in niche_lower for k in ['dent', 'ortho', 'smile', 'tooth', 'teeth', 'implant']) or ('clinic' in niche_lower and not any(s in niche_lower for s in ['salon', 'hair', 'spa'])):
+        default_theme = "light"
+        accent_color = "#0284c7"           # Sky / Medical Cyan
+        accent_hover = "#0369a1"
+        accent_glow = "rgba(2, 132, 199, 0.25)"
+        gold_accent = "#0284c7"
+        hero_img = "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
+        badge = f"Painless Digital Healthcare & Aesthetics • {city}"
+        headline = f"World-Class Dentistry & Smile Artistry in {city}"
+        subhead = "Experience pain-free digital dentistry, 3D smile design, and compassionate dental care designed around your comfort. Open daily 9:00 AM – 10:00 PM."
+        service_menu_label = "Dental Treatments"
+        booking_heading = "Book Your Dental Appointment"
+        booking_subhead = "Select your treatment and preferred time slot for instant doctor WhatsApp confirmation."
+        
+        services = [
+            {
+                "title": "Dental Implants & 3D Reconstruction",
+                "desc": "Precision computer-guided titanium implants and ceramic crowns restoring natural bite strength and radiant smile aesthetics.",
+                "price": "Free 3D Scan",
+                "duration": "Same-Day Consult",
+                "img": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                "title": "Clear Aligners (Invisalign)",
+                "desc": "Discreet, virtually undetectable custom aligners designed without metal brackets or wires. Eat, brush, and smile with confidence.",
+                "price": "Flexible EMI",
+                "duration": "Digital Scan Included",
+                "img": "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                "title": "Laser Teeth Whitening & Deep Polish",
+                "desc": "Advanced cool-light laser bleaching removing decades of stains in a single 45-minute painless session. Up to 8 shades lighter.",
+                "price": "₹2,999",
+                "duration": "45 Mins",
+                "img": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=600&q=80"
+            }
+        ]
+        reviews = [
+            ("Dr. Karthik Sundaram", "Whitefield, Bengaluru", "Painless root canal and flawless crown fit. The modern clinic and 1-tap WhatsApp appointments make life so easy.", 5),
+            ("Sneha Hegde", "Koramangala, Bengaluru", "Got my teeth whitened before an overseas conference. 4 shades lighter in 40 minutes with zero sensitivity!", 5),
+            ("Arjun Nair", "Indiranagar, Bengaluru", "The clear aligners process was explained clearly with 3D visuals. Highly recommended specialist team.", 5)
+        ]
+        old_flaws = [
+            "Pinch-to-zoom required on mobile to find emergency clinic phone number",
+            "Slow mobile page load latency causing prospective patients to drop off",
+            "No direct 1-tap WhatsApp consultation or doctor appointment booking",
+            "Lack of verified patient review gallery and before/after smile transformations"
+        ]
+        new_features = [
+            "Instant 1-tap WhatsApp consultation & slot confirmation",
+            "Sub-second mobile load time (<1 sec) optimized for 4G/5G smartphones",
+            "Interactive dental treatment menu with transparent pricing",
+            "Direct patient booking with zero third-party aggregator commissions"
+        ]
+
+    # B. Luxury Salons & Spas
+    elif any(k in niche_lower for k in ['salon', 'hair', 'spa', 'beauty', 'bridal', 'makeover', 'lash', 'nail']):
+        default_theme = "light"
+        accent_color = "#e11d48"           # Rose / Ruby Luxury
+        accent_hover = "#be123c"
+        accent_glow = "rgba(225, 29, 72, 0.25)"
         gold_accent = "#d4af37"
         hero_img = "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80"
         badge = f"Bengaluru's Premier Luxury Sanctuary • {city}"
         headline = f"Redefining Beauty, Hair & Radiance in {city}"
-        subhead = "Experience bespoke styling, French balayage, and clinical skincare in a serene boutique haven. Book directly on WhatsApp without third-party fees."
+        subhead = "Experience bespoke styling, French balayage, and clinical skincare in a serene boutique haven. Book directly on WhatsApp without third-party aggregator fees."
+        service_menu_label = "Treatment Menu"
+        booking_heading = "Reserve Your VIP Slot"
+        booking_subhead = "Select your service, stylist preference, and preferred time slot for instant WhatsApp booking."
+        
         services = [
             {
                 "title": "Bespoke Balayage & Gloss Therapy",
@@ -51,50 +124,34 @@ def generate_mockup_html(lead: dict) -> str:
             ("Ananya Sharma", "Koramangala, Bengaluru", "Stunning ambiance! The hydrafacial gave me the best glow before my sister's wedding. 10/10 service.", 5),
             ("Rohit Verma", "HSR Layout, Bengaluru", "Best men's styling and beard sculpting in town. Clean, punctual, and top-tier products.", 5)
         ]
-    elif any(k in niche_lower for k in ['dent', 'ortho', 'smile', 'clinic', 'derma', 'physio', 'health']):
-        accent_color = "#0284c7"
-        accent_glow = "rgba(2, 132, 199, 0.35)"
-        gold_accent = "#38bdf8"
-        hero_img = "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
-        badge = f"Painless Digital Healthcare & Aesthetics • {city}"
-        headline = f"World-Class Dentistry & Smile Artistry in {city}"
-        subhead = "Experience pain-free treatments, 3D digital smile scans, and compassionate care designed around your comfort. Transparent upfront pricing."
-        services = [
-            {
-                "title": "3D Digital Smile Makeover & Veneers",
-                "desc": "Precision computer-designed porcelain veneers and ceramic crowns for a luminous, symmetrical smile.",
-                "price": "₹4,999",
-                "duration": "Comprehensive Scan",
-                "img": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80"
-            },
-            {
-                "title": "Laser Teeth Whitening & Deep Hygiene",
-                "desc": "Advanced cool-light laser bleaching removing decades of stains in a single 45-minute painless session.",
-                "price": "₹2,999",
-                "duration": "45 Mins",
-                "img": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=600&q=80"
-            },
-            {
-                "title": "Clear Aligners & Invisible Orthodontics",
-                "desc": "Virtually undetectable custom aligners designed with zero metal brackets. Eat and smile freely.",
-                "price": "₹24,999",
-                "duration": "EMI Available",
-                "img": "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=600&q=80"
-            }
+        old_flaws = [
+            "Redirecting clients to third-party booking apps that take 20–25% commission",
+            "Slow mobile loading on smartphones causing clients to bounce",
+            "Missing direct stylist selection and instant WhatsApp slot reservation",
+            "Unoptimized heavy images causing layout shift on mobile"
         ]
-        reviews = [
-            ("Dr. Karthik Sundaram", "Whitefield, Bengaluru", "Painless root canal and flawless crown fit. The modern clinic and WhatsApp appointments make life so easy.", 5),
-            ("Sneha Hegde", "Jayanagar, Bengaluru", "Got my teeth whitened before an overseas conference. 4 shades lighter in 40 minutes with zero sensitivity!", 5),
-            ("Arjun Nair", "Indiranagar, Bengaluru", "The clear aligners process was explained clearly with 3D visuals. Highly recommended doctor.", 5)
+        new_features = [
+            "100% direct booking via WhatsApp with ZERO aggregator commissions",
+            "Lightning-fast mobile performance (<1 sec)",
+            "Visual treatment menu with transparent pricing",
+            "Instant client re-engagement and VIP slot booking"
         ]
+
+    # C. Cafes, Fine Dining & Restaurants
     elif any(k in niche_lower for k in ['restaurant', 'cafe', 'bistro', 'dining', 'bakery', 'food']):
-        accent_color = "#f59e0b"
-        accent_glow = "rgba(245, 158, 11, 0.35)"
-        gold_accent = "#fbbf24"
+        default_theme = "light"
+        accent_color = "#ea580c"           # Terracotta / Warm Amber
+        accent_hover = "#c2410c"
+        accent_glow = "rgba(234, 88, 12, 0.25)"
+        gold_accent = "#d97706"
         hero_img = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80"
         badge = f"Artisanal Culinary Destination • {city}"
         headline = f"Exquisite Dining & Crafted Flavors in {city}"
-        subhead = "Fresh seasonal ingredients, hand-tossed artisan recipes, and bespoke mixology. Reserve your private dining table instantly."
+        subhead = "Fresh seasonal ingredients, hand-tossed artisan recipes, and bespoke mixology. Reserve your private dining table instantly on WhatsApp."
+        service_menu_label = "Signature Menu"
+        booking_heading = "Reserve Your Dining Table"
+        booking_subhead = "Select your party size and preferred dining slot for instant WhatsApp table confirmation."
+        
         services = [
             {
                 "title": "Chef's 5-Course Seasonal Tasting",
@@ -123,43 +180,77 @@ def generate_mockup_html(lead: dict) -> str:
             ("Divya Nair", "Koramangala, Bengaluru", "The chef's tasting menu is a revelation! Every course tells a story. Will definitely be returning.", 5),
             ("Amit Patel", "Indiranagar, Bengaluru", "Great vibe, stellar cocktails, and zero aggregator app hassle. Direct booking is the way to go.", 5)
         ]
+        old_flaws = [
+            "Clunky 15MB PDF menu download required to view dishes on mobile",
+            "No instant 1-tap WhatsApp weekend table reservation",
+            "Lack of high-resolution food gallery and allergen tags",
+            "Third-party delivery platforms taking 25–30% margins"
+        ]
+        new_features = [
+            "Interactive mobile digital menu with instant search (zero PDF download)",
+            "Direct 1-tap WhatsApp table reservations",
+            "Visual photo carousel for signature dishes",
+            "Direct client inquiries with zero aggregator fees"
+        ]
+
+    # D. Architecture, Interior Design & Contractors
     else:
-        # General / Architecture / High-Ticket Contractors / Home Services
-        accent_color = "#10b981"
-        accent_glow = "rgba(16, 185, 129, 0.35)"
-        gold_accent = "#34d399"
+        default_theme = "light"
+        accent_color = "#0f172a"           # Deep Architectural Slate
+        accent_hover = "#1e293b"
+        accent_glow = "rgba(15, 23, 42, 0.2)"
+        gold_accent = "#d97706"
         hero_img = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
-        badge = f"Top-Rated Quality & Certified Excellence • {city}"
-        headline = f"Trusted & Reliable {niche} in {city}"
-        subhead = f"Delivering unmatched craftsmanship, transparent upfront estimates, and 5-star customer satisfaction across {city}. Fast turnaround guaranteed."
+        badge = f"Award-Winning Luxury Architecture • {city}"
+        headline = f"Bespoke Interior Architecture & Luxury Design in {city}"
+        subhead = "Crafting timeless residential sanctuaries and commercial spaces with architectural precision, sustainable materials, and turnkey execution."
+        service_menu_label = "Design Portfolio"
+        booking_heading = "Request Architectural Consultation"
+        booking_subhead = "Share your project scope, sq.ft requirements, and preferred date for a direct consultation."
+        
         services = [
             {
-                "title": "Complete Turnkey Project Execution",
-                "desc": "Full-scale modern design, premium verified materials, and dedicated supervisor from start to handover.",
-                "price": "₹4,999 / Scope",
-                "duration": "Guaranteed Timeline",
-                "img": "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80"
+                "title": "Complete Turnkey Villa & Penthouse Interiors",
+                "desc": "Full-scale bespoke architectural detailing, Italian marble curation, custom millwork, and dedicated site supervisor.",
+                "price": "Custom Scope",
+                "duration": "Turnkey Timeline",
+                "img": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
             },
             {
-                "title": "Rapid Repairs & Priority Diagnostic",
-                "desc": "Swift same-day troubleshooting, detailed photographic evaluation, and zero hidden inspection charges.",
-                "price": "₹1,499",
-                "duration": "Same-Day Slot",
-                "img": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80"
-            },
-            {
-                "title": "Free Structural Evaluation & 3D Quote",
-                "desc": "Comprehensive site inspection with transparent material pricing and custom architectural rendering.",
+                "title": "2D / 3D Spatial Layout & Render Suite",
+                "desc": "Photorealistic 3D visualization, lighting simulations, and structural drawings before breaking ground.",
                 "price": "Free Estimate",
-                "duration": "Zero Obligation",
+                "duration": "3D Floorplan",
                 "img": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                "title": "Luxury Commercial & Studio Architecture",
+                "desc": "Ergonomic, high-fashion boutique workspaces, aesthetic clinics, and fine dining spatial planning.",
+                "price": "Portfolio Review",
+                "duration": "Bespoke Concept",
+                "img": "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80"
             }
         ]
         reviews = [
-            ("Ramesh Chandran", "Bengaluru", "Super transparent pricing and punctual team. Booked inspection via WhatsApp and they arrived on time.", 5),
-            ("Siddharth Menon", "Indiranagar", "Replaced my old clunky setup with clean modern work. Best contractor experience in Bengaluru.", 5),
-            ("Meera Krishnan", "Whitefield", "Professional, courteous, and no hidden charges. Highly recommend their services.", 5)
+            ("Ramesh Chandran", "Lavelle Road, Bengaluru", "Studio Morph transformed our 4,500 sq.ft villa in Whitefield. Flawless attention to natural light and woodwork.", 5),
+            ("Siddharth Menon", "Indiranagar, Bengaluru", "The 3D walkthroughs were identical to the final finished penthouse. Best architecture studio in Bengaluru.", 5),
+            ("Meera Krishnan", "Whitefield, Bengaluru", "Professional, punctual, and transparent BOQ billing. Highest recommendation.", 5)
         ]
+        old_flaws = [
+            "Uncompressed 4K portfolio images taking over 4.5 seconds to load on mobile",
+            "Missing interactive 1-tap WhatsApp 2D/3D floorplan consultation link",
+            "Lack of interactive project scope and sq.ft budget estimator",
+            "Clunky mobile navigation causing wealthy prospective clients to drop off"
+        ]
+        new_features = [
+            "Sub-second 60fps editorial portfolio layout with smart WebP compression",
+            "Direct 1-tap WhatsApp floorplan consultation",
+            "Clear architectural phase roadmap and verified material transparency",
+            "Zero middleman friction — direct high-ticket client inquiries"
+        ]
+
+    # Theme selection (Light by default for all high-ticket local businesses!)
+    active_theme = requested_theme if requested_theme in ['light', 'dark'] else default_theme
 
     # Service Cards HTML
     services_cards_html = ""
@@ -176,7 +267,7 @@ def generate_mockup_html(lead: dict) -> str:
                 <p>{s['desc']}</p>
                 <div class="card-action-row">
                     <button class="btn-card-book" onclick="selectServiceForBooking('{s['title']}', '{s['price']}')">
-                        <span>Book Slot</span>
+                        <span>Select Service</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
                 </div>
@@ -205,53 +296,86 @@ def generate_mockup_html(lead: dict) -> str:
         </div>
         """
 
+    # Comparison HTML
+    comp_old_html = "".join([f'<li><span class="icon-cross">✕</span> {f}</li>' for f in old_flaws])
+    comp_new_html = "".join([f'<li><span class="icon-check">✓</span> {f}</li>' for f in new_features])
+
     # WhatsApp Direct Link for Claiming
-    wa_claim_text = urllib.parse.quote(f"Hi Ruban! I saw the modern website redesign concept for {name} ({city}) and want to claim the ₹2,999 Starter Redesign Package.")
+    wa_claim_text = urllib.parse.quote(f"Hi Ruban! I saw the modern website redesign concept for {name} ({city}) and want to claim the Starter Redesign Package.")
     wa_claim_url = f"https://wa.me/918098671563?text={wa_claim_text}"
 
     # WhatsApp Customer Booking URL
     wa_cust_text = urllib.parse.quote(f"Hello {name}! I would like to book an appointment for your services in {city}.")
-    wa_cust_url = f"https://wa.me/{phone.replace('+', '').replace(' ', '').replace('-', '')}?text={wa_cust_text}" if phone else "#booking"
+    clean_phone_digits = re.sub(r'\\D', '', phone)
+    wa_cust_url = f"https://wa.me/{clean_phone_digits}?text={wa_cust_text}" if clean_phone_digits else "#booking"
 
     html = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{active_theme}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{name} — Bespoke Modern Experience</title>
+    <title>{name} — Upgraded Digital Experience (Concept)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
+            /* Light Theme (Default for Clinical, Healthcare & Premium Local Businesses) */
+            --bg-canvas: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --border-hairline: #e2e8f0;
+            --border-glow: {accent_glow};
+            --accent: {accent_color};
+            --accent-hover: {accent_hover};
+            --gold: {gold_accent};
+            --text-heading: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
+            --shadow-card: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+            --header-bg: rgba(255, 255, 255, 0.94);
+            --input-bg: #f8fafc;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+        }}
+
+        [data-theme="dark"] {{
+            /* Dark Theme Toggle */
             --bg-canvas: #090b10;
             --bg-surface: #10141d;
             --bg-card: #151b27;
+            --bg-card-hover: #1c2333;
             --border-hairline: rgba(255, 255, 255, 0.08);
             --border-glow: {accent_glow};
             --accent: {accent_color};
+            --accent-hover: {accent_hover};
             --gold: {gold_accent};
-            --text-white: #f8fafc;
+            --text-heading: #ffffff;
+            --text-body: #f8fafc;
             --text-muted: #94a3b8;
             --text-subtle: #64748b;
-            --radius-md: 12px;
-            --radius-lg: 20px;
+            --shadow-card: 0 20px 40px rgba(0,0,0,0.5);
+            --header-bg: rgba(16, 20, 29, 0.92);
+            --input-bg: rgba(255,255,255,0.04);
         }}
+
         * {{ margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }}
         body {{
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-canvas);
-            color: var(--text-white);
+            color: var(--text-body);
             line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            transition: background 0.3s ease, color 0.3s ease;
         }}
 
-        /* 1. Designer Launchpad Sticky Header */
+        /* 1. Designer Launchpad Sticky Header (Permanent Ruban Agency Ribbon) */
         .ruban-designer-bar {{
-            background: rgba(15, 10, 25, 0.96);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(225, 29, 72, 0.3);
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             color: #f1f5f9;
             padding: 10px 24px;
             font-size: 13px;
@@ -261,7 +385,7 @@ def generate_mockup_html(lead: dict) -> str:
             position: sticky;
             top: 0;
             z-index: 10000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
         }}
         .designer-info {{
             display: flex;
@@ -270,9 +394,9 @@ def generate_mockup_html(lead: dict) -> str:
             flex-wrap: wrap;
         }}
         .tag-concept {{
-            background: #e11d48;
+            background: #2563eb;
             color: #fff;
-            padding: 3px 9px;
+            padding: 3px 10px;
             border-radius: 999px;
             font-weight: 700;
             font-size: 11px;
@@ -282,7 +406,7 @@ def generate_mockup_html(lead: dict) -> str:
         .designer-cta-group {{
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }}
         .btn-claim-package {{
             background: #10b981;
@@ -295,13 +419,12 @@ def generate_mockup_html(lead: dict) -> str:
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
             transition: all 0.2s;
         }}
-        .btn-claim-package:hover {{ transform: translateY(-1px); background: #059669; }}
+        .btn-claim-package:hover {{ background: #059669; transform: translateY(-1px); }}
         .btn-view-portfolio {{
-            background: rgba(255,255,255,0.08);
-            border: 1px solid var(--border-hairline);
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
             color: #fff;
             padding: 6px 14px;
             border-radius: 8px;
@@ -310,11 +433,28 @@ def generate_mockup_html(lead: dict) -> str:
             text-decoration: none;
             transition: all 0.2s;
         }}
-        .btn-view-portfolio:hover {{ background: rgba(255,255,255,0.15); }}
+        .btn-view-portfolio:hover {{ background: rgba(255,255,255,0.2); }}
 
-        /* 2. Brand Luxury Navbar */
+        /* Theme Toggle Button */
+        .btn-theme-toggle {{
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }}
+        .btn-theme-toggle:hover {{ background: rgba(255,255,255,0.25); }}
+
+        /* 2. Brand Navbar */
         .site-header {{
-            background: rgba(16, 20, 29, 0.75);
+            background: var(--header-bg);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-hairline);
             padding: 16px 40px;
@@ -324,12 +464,13 @@ def generate_mockup_html(lead: dict) -> str:
             position: sticky;
             top: 45px;
             z-index: 999;
+            transition: background 0.3s;
         }}
         .brand-logo {{
             font-family: 'Space Grotesk', sans-serif;
             font-size: 21px;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-heading);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -356,7 +497,7 @@ def generate_mockup_html(lead: dict) -> str:
             font-weight: 500;
             transition: color 0.2s;
         }}
-        .nav-menu a:hover {{ color: #fff; }}
+        .nav-menu a:hover {{ color: var(--accent); }}
         .header-actions {{
             display: flex;
             align-items: center;
@@ -392,92 +533,93 @@ def generate_mockup_html(lead: dict) -> str:
         /* 3. Hero Section */
         .hero-section {{
             position: relative;
-            padding: 80px 40px 100px;
-            max-width: 1400px;
+            padding: 70px 40px 90px;
+            max-width: 1320px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1.15fr 0.85fr;
-            gap: 60px;
+            gap: 50px;
             align-items: center;
         }}
         .hero-badge {{
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-hairline);
-            padding: 8px 18px;
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            padding: 7px 16px;
             border-radius: 9999px;
             font-size: 13px;
             font-weight: 600;
-            color: var(--gold);
-            margin-bottom: 24px;
+            color: #0369a1;
+            margin-bottom: 22px;
+        }}
+        [data-theme="dark"] .hero-badge {{
+            background: rgba(2, 132, 199, 0.15);
+            border-color: rgba(2, 132, 199, 0.3);
+            color: #38bdf8;
         }}
         .hero-title {{
-            font-size: 52px;
+            font-size: 46px;
             font-weight: 800;
-            line-height: 1.12;
+            line-height: 1.15;
             letter-spacing: -0.03em;
-            margin-bottom: 22px;
-            color: #fff;
-        }}
-        .hero-title span {{
-            background: linear-gradient(135deg, #fff 40%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            color: var(--text-heading);
         }}
         .hero-sub {{
-            font-size: 18px;
+            font-size: 17px;
             color: var(--text-muted);
             line-height: 1.6;
-            margin-bottom: 34px;
+            margin-bottom: 32px;
             max-width: 600px;
         }}
         .hero-btn-row {{
             display: flex;
             gap: 16px;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
         }}
         .btn-hero-primary {{
             background: var(--accent);
             color: #fff;
-            padding: 15px 32px;
-            border-radius: 12px;
+            padding: 14px 30px;
+            border-radius: var(--radius-md);
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 4px 20px var(--border-glow);
+            box-shadow: 0 4px 16px var(--border-glow);
             transition: all 0.2s;
         }}
-        .btn-hero-primary:hover {{ transform: translateY(-2px); opacity: 0.95; }}
+        .btn-hero-primary:hover {{ background: var(--accent-hover); transform: translateY(-2px); }}
         .btn-hero-secondary {{
-            background: rgba(255,255,255,0.05);
+            background: var(--bg-surface);
             border: 1px solid var(--border-hairline);
-            color: #fff;
-            padding: 15px 26px;
-            border-radius: 12px;
+            color: var(--text-heading);
+            padding: 14px 24px;
+            border-radius: var(--radius-md);
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
             text-decoration: none;
             transition: all 0.2s;
         }}
-        .btn-hero-secondary:hover {{ background: rgba(255,255,255,0.1); }}
+        .btn-hero-secondary:hover {{ background: var(--bg-card-hover); }}
 
         .trust-strip {{
             display: flex;
-            gap: 28px;
-            padding-top: 28px;
+            gap: 24px;
+            padding-top: 24px;
             border-top: 1px solid var(--border-hairline);
             flex-wrap: wrap;
         }}
         .trust-item {{
             font-size: 13px;
             font-weight: 600;
-            color: var(--text-white);
+            color: var(--text-heading);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -492,53 +634,55 @@ def generate_mockup_html(lead: dict) -> str:
             background: var(--bg-surface);
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-lg);
-            padding: 36px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            padding: 34px;
+            box-shadow: var(--shadow-card);
             position: relative;
         }}
         .booking-card::before {{
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--gold));
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent), #10b981);
             border-top-left-radius: var(--radius-lg);
             border-top-right-radius: var(--radius-lg);
         }}
         .booking-card h3 {{
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 800;
+            color: var(--text-heading);
             margin-bottom: 6px;
         }}
         .booking-card p {{
             font-size: 13px;
             color: var(--text-muted);
-            margin-bottom: 24px;
+            margin-bottom: 22px;
         }}
         .booking-field {{
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }}
         .booking-field label {{
             display: block;
             font-size: 12px;
             font-weight: 700;
-            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 8px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
         }}
-        .booking-select, .booking-input {{
+        .booking-input, .booking-select {{
             width: 100%;
-            background: var(--bg-card);
+            background: var(--input-bg);
             border: 1px solid var(--border-hairline);
-            color: #fff;
-            padding: 13px 16px;
-            border-radius: var(--radius-md);
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: var(--text-heading);
             font-size: 14px;
             outline: none;
-            font-family: inherit;
+            transition: all 0.2s;
         }}
-        .booking-select:focus, .booking-input:focus {{
+        .booking-input:focus, .booking-select:focus {{
             border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--border-glow);
         }}
         .time-slot-grid {{
             display: grid;
@@ -547,9 +691,9 @@ def generate_mockup_html(lead: dict) -> str:
             margin-top: 8px;
         }}
         .time-pill {{
-            background: var(--bg-card);
+            background: var(--input-bg);
             border: 1px solid var(--border-hairline);
-            color: var(--text-muted);
+            color: var(--text-body);
             padding: 8px 6px;
             border-radius: 8px;
             font-size: 12px;
@@ -568,7 +712,7 @@ def generate_mockup_html(lead: dict) -> str:
             background: #10b981;
             color: #fff;
             border: none;
-            padding: 15px;
+            padding: 14px;
             border-radius: var(--radius-md);
             font-size: 15px;
             font-weight: 700;
@@ -577,9 +721,9 @@ def generate_mockup_html(lead: dict) -> str:
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 24px;
+            margin-top: 22px;
             transition: all 0.2s;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
         }}
         .btn-confirm-wa:hover {{
             background: #059669;
@@ -588,13 +732,13 @@ def generate_mockup_html(lead: dict) -> str:
 
         /* 4. Transformation Showcase (Before vs Ruban Modern) */
         .comparison-section {{
-            max-width: 1300px;
+            max-width: 1240px;
             margin: 40px auto 80px;
-            padding: 0 40px;
+            padding: 0 30px;
         }}
         .section-header {{
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 46px;
         }}
         .section-tag {{
             font-size: 12px;
@@ -606,18 +750,18 @@ def generate_mockup_html(lead: dict) -> str:
             display: block;
         }}
         .section-header h2 {{
-            font-size: 38px;
+            font-size: 34px;
             font-weight: 800;
             letter-spacing: -0.02em;
             margin-bottom: 12px;
+            color: var(--text-heading);
         }}
         .section-header p {{
-            font-size: 16px;
+            font-size: 15px;
             color: var(--text-muted);
             max-width: 600px;
             margin: 0 auto;
         }}
-
         .comparison-grid {{
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -625,17 +769,25 @@ def generate_mockup_html(lead: dict) -> str:
         }}
         .comp-card {{
             border-radius: var(--radius-lg);
-            padding: 36px;
+            padding: 34px;
             position: relative;
         }}
         .comp-card.old {{
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }}
+        [data-theme="dark"] .comp-card.old {{
             background: rgba(239, 68, 68, 0.04);
-            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.25);
         }}
         .comp-card.new {{
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+        }}
+        [data-theme="dark"] .comp-card.new {{
             background: rgba(16, 185, 129, 0.05);
-            border: 1px solid rgba(16, 185, 129, 0.35);
-            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.35);
         }}
         .comp-badge {{
             font-size: 12px;
@@ -645,9 +797,9 @@ def generate_mockup_html(lead: dict) -> str:
             display: inline-block;
             margin-bottom: 16px;
         }}
-        .comp-badge.old-b {{ background: rgba(239, 68, 68, 0.2); color: #f87171; }}
-        .comp-badge.new-b {{ background: rgba(16, 185, 129, 0.2); color: #34d399; }}
-        .comp-card h3 {{ font-size: 24px; font-weight: 700; margin-bottom: 16px; }}
+        .comp-badge.old-b {{ background: #fee2e2; color: #dc2626; }}
+        .comp-badge.new-b {{ background: #dcfce7; color: #16a34a; }}
+        .comp-card h3 {{ font-size: 22px; font-weight: 700; margin-bottom: 16px; color: var(--text-heading); }}
         .comp-list {{ list-style: none; }}
         .comp-list li {{
             font-size: 14px;
@@ -655,37 +807,38 @@ def generate_mockup_html(lead: dict) -> str:
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--text-body);
         }}
         .icon-cross {{ color: #ef4444; font-weight: 900; }}
         .icon-check {{ color: #10b981; font-weight: 900; }}
 
         /* 5. Services Grid */
         .services-section {{
-            max-width: 1300px;
+            max-width: 1240px;
             margin: 0 auto 90px;
-            padding: 0 40px;
+            padding: 0 30px;
         }}
         .services-grid {{
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 28px;
+            gap: 26px;
         }}
         .luxury-card {{
             background: var(--bg-surface);
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-lg);
             overflow: hidden;
+            box-shadow: var(--shadow-card);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             flex-direction: column;
         }}
         .luxury-card:hover {{
             transform: translateY(-6px);
-            border-color: var(--border-glow);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border-color: var(--accent);
         }}
         .card-img-wrap {{
-            height: 220px;
+            height: 200px;
             position: relative;
             overflow: hidden;
         }}
@@ -702,17 +855,16 @@ def generate_mockup_html(lead: dict) -> str:
             position: absolute;
             bottom: 12px;
             right: 12px;
-            background: rgba(9, 11, 16, 0.88);
+            background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(8px);
-            border: 1px solid var(--border-hairline);
             color: #fff;
-            padding: 5px 12px;
+            padding: 4px 12px;
             border-radius: 999px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
         }}
         .card-content {{
-            padding: 26px;
+            padding: 24px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -726,22 +878,23 @@ def generate_mockup_html(lead: dict) -> str:
             margin-bottom: 8px;
         }}
         .card-content h3 {{
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 700;
             margin-bottom: 10px;
-            color: #fff;
+            color: var(--text-heading);
         }}
         .card-content p {{
             font-size: 14px;
             color: var(--text-muted);
-            margin-bottom: 22px;
+            margin-bottom: 20px;
             flex-grow: 1;
+            line-height: 1.5;
         }}
         .btn-card-book {{
-            background: var(--bg-card);
+            background: var(--input-bg);
             border: 1px solid var(--border-hairline);
-            color: #fff;
-            padding: 10px 18px;
+            color: var(--text-heading);
+            padding: 10px 16px;
             border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
@@ -755,13 +908,14 @@ def generate_mockup_html(lead: dict) -> str:
         .btn-card-book:hover {{
             background: var(--accent);
             border-color: var(--accent);
+            color: #fff;
         }}
 
         /* 6. Social Proof / Google Reviews */
         .reviews-section {{
-            max-width: 1300px;
-            margin: 0 auto 100px;
-            padding: 0 40px;
+            max-width: 1240px;
+            margin: 0 auto 90px;
+            padding: 0 30px;
         }}
         .reviews-grid {{
             display: grid;
@@ -772,7 +926,8 @@ def generate_mockup_html(lead: dict) -> str:
             background: var(--bg-surface);
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-md);
-            padding: 26px;
+            padding: 24px;
+            box-shadow: var(--shadow-card);
         }}
         .review-top {{
             display: flex;
@@ -782,11 +937,11 @@ def generate_mockup_html(lead: dict) -> str:
         }}
         .review-stars {{ color: #f59e0b; font-size: 15px; letter-spacing: 2px; }}
         .verified-pill {{ font-size: 11px; color: #10b981; font-weight: 600; }}
-        .review-body {{ font-size: 14px; color: var(--text-white); margin-bottom: 20px; font-style: italic; }}
+        .review-body {{ font-size: 14px; color: var(--text-body); margin-bottom: 18px; font-style: italic; }}
         .reviewer-meta {{ display: flex; align-items: center; gap: 12px; }}
         .reviewer-avatar {{
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--accent);
             color: #fff;
@@ -794,20 +949,20 @@ def generate_mockup_html(lead: dict) -> str:
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
         }}
-        .reviewer-name {{ font-size: 14px; font-weight: 700; color: #fff; }}
+        .reviewer-name {{ font-size: 14px; font-weight: 700; color: var(--text-heading); }}
         .reviewer-loc {{ font-size: 12px; color: var(--text-subtle); }}
 
         /* 7. Footer */
         footer {{
-            background: #06080d;
+            background: var(--bg-surface);
             border-top: 1px solid var(--border-hairline);
-            padding: 50px 40px;
+            padding: 40px 30px;
             text-align: center;
         }}
-        footer p {{ font-size: 14px; color: var(--text-muted); }}
-        footer strong {{ color: #fff; }}
+        footer p {{ font-size: 13px; color: var(--text-muted); }}
+        footer strong {{ color: var(--text-heading); }}
 
         /* Floating WhatsApp Action Pill */
         .floating-wa-btn {{
@@ -818,7 +973,7 @@ def generate_mockup_html(lead: dict) -> str:
             color: #fff;
             padding: 12px 20px;
             border-radius: 9999px;
-            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.45);
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
             font-weight: 700;
             font-size: 14px;
             text-decoration: none;
@@ -831,13 +986,13 @@ def generate_mockup_html(lead: dict) -> str:
         .floating-wa-btn:hover {{ transform: scale(1.05); }}
 
         @media (max-width: 1024px) {{
-            .hero-section {{ grid-template-columns: 1fr; padding: 40px 24px; }}
+            .hero-section {{ grid-template-columns: 1fr; padding: 40px 20px; }}
             .comparison-grid {{ grid-template-columns: 1fr; }}
             .services-grid {{ grid-template-columns: 1fr; }}
             .reviews-grid {{ grid-template-columns: 1fr; }}
             .site-header {{ padding: 14px 20px; }}
             .nav-menu {{ display: none; }}
-            .hero-title {{ font-size: 38px; }}
+            .hero-title {{ font-size: 34px; }}
         }}
     </style>
 </head>
@@ -848,19 +1003,22 @@ def generate_mockup_html(lead: dict) -> str:
         <div class="designer-info">
             <span class="tag-concept">Bespoke UI Redesign</span>
             <span>Crafted for <strong>{name}</strong> by <strong>Ruban Velankanni</strong> (Bengaluru)</span>
-            <span style="color: var(--gold); font-weight: 700;">• 3-Day Turnaround • Starter Offer: ₹2,999</span>
         </div>
         <div class="designer-cta-group">
+            <button class="btn-theme-toggle" onclick="toggleTheme()" id="themeToggleBtn">
+                <span id="themeIcon">{'🌙' if active_theme == 'light' else '☀️'}</span>
+                <span id="themeLabel">{'Dark Mode' if active_theme == 'light' else 'Light Mode'}</span>
+            </button>
             <a href="{wa_claim_url}" target="_blank" class="btn-claim-package">
-                <span>Claim This Redesign (WhatsApp)</span>
+                <span>Claim Redesign (WhatsApp)</span>
             </a>
             <a href="https://portfolio.rvsmps.store" target="_blank" class="btn-view-portfolio">
-                <span>View Ruban's Portfolio</span>
+                <span>Ruban's Portfolio</span>
             </a>
         </div>
     </aside>
 
-    <!-- 2. Brand Luxury Navbar -->
+    <!-- 2. Brand Navbar -->
     <header class="site-header">
         <a href="#" class="brand-logo">
             <span class="brand-dot"></span>
@@ -868,7 +1026,7 @@ def generate_mockup_html(lead: dict) -> str:
         </a>
         <nav>
             <ul class="nav-menu">
-                <li><a href="#services">Treatment Menu</a></li>
+                <li><a href="#services">{service_menu_label}</a></li>
                 <li><a href="#comparison">Why Redesign</a></li>
                 <li><a href="#reviews">Google Reviews</a></li>
                 <li><a href="#booking">Book Appointment</a></li>
@@ -889,7 +1047,7 @@ def generate_mockup_html(lead: dict) -> str:
                 <div class="hero-badge">
                     <span>★ 4.9 Rating (240+ Google Reviews)</span> • <span>{badge}</span>
                 </div>
-                <h1 class="hero-title"><span>{headline}</span></h1>
+                <h1 class="hero-title">{headline}</h1>
                 <p class="hero-sub">{subhead}</p>
 
                 <div class="hero-btn-row">
@@ -911,12 +1069,12 @@ def generate_mockup_html(lead: dict) -> str:
 
             <!-- Interactive Booking Console Card -->
             <div class="booking-card" id="booking">
-                <h3>Reserve Your VIP Slot</h3>
-                <p>Select your treatment, date, and preferred time slot for instant WhatsApp booking.</p>
+                <h3>{booking_heading}</h3>
+                <p>{booking_subhead}</p>
 
                 <form onsubmit="handleCustomerBooking(event)">
                     <div class="booking-field">
-                        <label>Select Treatment / Service</label>
+                        <label>Select Service / Treatment</label>
                         <select class="booking-select" id="serviceSelect" required>
                             <option value="{services[0]['title']} ({services[0]['price']})">{services[0]['title']} — {services[0]['price']}</option>
                             <option value="{services[1]['title']} ({services[1]['price']})">{services[1]['title']} — {services[1]['price']}</option>
@@ -940,52 +1098,46 @@ def generate_mockup_html(lead: dict) -> str:
                     </div>
 
                     <button type="submit" class="btn-confirm-wa">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19.02L7.55 18.84L4.44 19.66L5.27 16.63L5.07 16.31C4.24 15 3.81 13.48 3.81 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
-                        <span>Confirm Slot on WhatsApp →</span>
+                        <span>Confirm Slot on WhatsApp</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
                 </form>
             </div>
         </section>
 
-        <!-- 4. Before & After Transformation Section -->
+        <!-- 4. Transformation Comparison -->
         <section class="comparison-section" id="comparison">
             <div class="section-header">
-                <span class="section-tag">High-Conversion UX Upgrade</span>
-                <h2>Why {name} Needs This Upgrade</h2>
-                <p>See the direct difference between the current website and Ruban's modern redesign.</p>
+                <span class="section-tag">Direct Value Audit</span>
+                <h2>Why Upgrade With Ruban Designs</h2>
+                <p>Solving the exact mobile friction points currently losing you direct customer inquiries.</p>
             </div>
 
             <div class="comparison-grid">
                 <div class="comp-card old">
-                    <span class="comp-badge old-b">Current Clunky Website ({domain})</span>
-                    <h3>The Friction Bottleneck</h3>
+                    <span class="comp-badge old-b">Current Website Friction</span>
+                    <h3>What Might Be Costing You Clients</h3>
                     <ul class="comp-list">
-                        <li><span class="icon-cross">✗</span> Slow load speed drives away 65% of mobile visitors</li>
-                        <li><span class="icon-cross">✗</span> Missing direct 1-tap WhatsApp booking button</li>
-                        <li><span class="icon-cross">✗</span> Buried reviews and no clear service pricing menu</li>
-                        <li><span class="icon-cross">✗</span> Paying 20-25% aggregator commission fees on third-party apps</li>
+                        {comp_old_html}
                     </ul>
                 </div>
 
                 <div class="comp-card new">
-                    <span class="comp-badge new-b">Ruban Modern Architecture (Concept)</span>
-                    <h3>The High-Conversion Engine</h3>
+                    <span class="comp-badge new-b">Ruban Designs Upgraded Architecture</span>
+                    <h3>High-Converting Modern Standard</h3>
                     <ul class="comp-list">
-                        <li><span class="icon-check">✓</span> Instant &lt;1.0s mobile load speed on ultra-fast edge CDN</li>
-                        <li><span class="icon-check">✓</span> 1-Click WhatsApp appointment booking prefilled in seconds</li>
-                        <li><span class="icon-check">✓</span> Clear treatment cards with upfront INR pricing and star badges</li>
-                        <li><span class="icon-check">✓</span> 100% direct client ownership with ZERO commission to aggregators</li>
+                        {comp_new_html}
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- 5. Treatment Menu / Services -->
+        <!-- 5. Services Grid -->
         <section class="services-section" id="services">
             <div class="section-header">
-                <span class="section-tag">Signature Experiences</span>
-                <h2>Featured Treatment Menu</h2>
-                <p>Crafted for aesthetic perfection, clinical safety, and lasting satisfaction in {city}.</p>
+                <span class="section-tag">Verified Offerings</span>
+                <h2>{service_menu_label}</h2>
+                <p>Transparent pricing, specialist consultation, and effortless 1-tap WhatsApp booking.</p>
             </div>
 
             <div class="services-grid">
@@ -993,12 +1145,12 @@ def generate_mockup_html(lead: dict) -> str:
             </div>
         </section>
 
-        <!-- 6. Google Verified Reviews -->
+        <!-- 6. Google Reviews -->
         <section class="reviews-section" id="reviews">
             <div class="section-header">
-                <span class="section-tag">Verified Proof</span>
-                <h2>Loved by Clients Across {city}</h2>
-                <p>Over 240+ five-star verified Google reviews celebrating our quality.</p>
+                <span class="section-tag">Community Reputation</span>
+                <h2>5-Star Customer Stories</h2>
+                <p>What real patients and clients in {city} say about your verified reputation.</p>
             </div>
 
             <div class="reviews-grid">
@@ -1007,17 +1159,15 @@ def generate_mockup_html(lead: dict) -> str:
         </section>
     </main>
 
+    <!-- 7. Footer -->
+    <footer>
+        <p>Interactive Concept Prototype by <strong>Ruban Designs</strong> (Bengaluru) &bull; Verified Portfolio: <a href="https://portfolio.rvsmps.store" style="color: var(--accent); text-decoration: none;">portfolio.rvsmps.store</a></p>
+    </footer>
+
     <!-- Floating WhatsApp Action -->
     <a href="{wa_claim_url}" target="_blank" class="floating-wa-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19.02L7.55 18.84L4.44 19.66L5.27 16.63L5.07 16.31C4.24 15 3.81 13.48 3.81 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
-        <span>Claim ₹2,999 Redesign (Ruban)</span>
+        <span>Claim Redesign (₹2,999)</span>
     </a>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 <strong>{name}</strong> • Designed with conversion architecture by <strong>Ruban Velankanni (Bengaluru)</strong></p>
-        <p style="margin-top: 8px; font-size: 12px; color: var(--text-subtle);">This interactive preview demonstrates modern high-converting UI engineering.</p>
-    </footer>
 
     <script>
         let selectedTimeSlot = "11:00 AM";
@@ -1025,14 +1175,14 @@ def generate_mockup_html(lead: dict) -> str:
         function selectTime(el) {{
             document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('active'));
             el.classList.add('active');
-            selectedTimeSlot = el.innerText;
+            selectedTimeSlot = el.innerText.trim();
         }}
 
-        function selectServiceForBooking(title, price) {{
-            const sel = document.getElementById('serviceSelect');
-            for (let i = 0; i < sel.options.length; i++) {{
-                if (sel.options[i].text.includes(title)) {{
-                    sel.selectedIndex = i;
+        function selectServiceForBooking(serviceTitle, price) {{
+            const selectEl = document.getElementById('serviceSelect');
+            for (let i = 0; i < selectEl.options.length; i++) {{
+                if (selectEl.options[i].value.includes(serviceTitle)) {{
+                    selectEl.selectedIndex = i;
                     break;
                 }}
             }}
@@ -1043,9 +1193,18 @@ def generate_mockup_html(lead: dict) -> str:
             e.preventDefault();
             const service = document.getElementById('serviceSelect').value;
             const name = document.getElementById('custName').value;
-            const text = `Hello {name}! My name is ${{name}}. I would like to book an appointment for: ${{service}} at ${{selectedTimeSlot}} in {city}.`;
-            const waUrl = `https://wa.me/{phone.replace('+', '').replace(' ', '').replace('-', '')}?text=${{encodeURIComponent(text)}}`;
+            const msg = `Hello {name}! My name is ${{name}}. I would like to book an appointment for ${{service}} at ${{selectedTimeSlot}}.`;
+            const waUrl = "https://wa.me/{clean_phone_digits}?text=" + encodeURIComponent(msg);
             window.open(waUrl, '_blank');
+        }}
+
+        function toggleTheme() {{
+            const htmlEl = document.documentElement;
+            const currentTheme = htmlEl.getAttribute('data-theme');
+            const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+            htmlEl.setAttribute('data-theme', nextTheme);
+            document.getElementById('themeIcon').textContent = nextTheme === 'light' ? '🌙' : '☀️';
+            document.getElementById('themeLabel').textContent = nextTheme === 'light' ? 'Dark Mode' : 'Light Mode';
         }}
     </script>
 </body>
@@ -1055,11 +1214,11 @@ def generate_mockup_html(lead: dict) -> str:
 
 if __name__ == "__main__":
     sample = {
-        'name': 'Luxe Hair & Spa Studio',
-        'city': 'Indiranagar, Bangalore',
-        'niche': 'Luxury Salons & Spas',
-        'phone': '+91 80986 71563',
-        'domain': 'luxehairbangalore.com'
+        'name': 'Aesthetic Advanced Dental',
+        'city': 'Koramangala, Bengaluru',
+        'niche': 'Dental & Aesthetic Clinics',
+        'domain': 'aestheticadvanceddental.com',
+        'phone': '+91 86603 51505'
     }
-    html = generate_mockup_html(sample)
-    print("Mockup generated successfully! Length:", len(html))
+    out = generate_mockup_html(sample)
+    print("Mockup generation test successful! Length:", len(out))
