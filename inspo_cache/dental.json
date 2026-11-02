@@ -1,0 +1,34 @@
+{
+  "slug": "alliahealth-co",
+  "benchmark_name": "Allia Health Group",
+  "benchmark_url": "https://alliahealth.co",
+  "industry": "health",
+  "style": "minimalism",
+  "mode": "light",
+  "vibe": "Serene Clinical Clarity & Patient Comfort",
+  "northstar": "Soft teal gradients and open, airy sans-serif type create a serene, modern clinical feel.",
+  "palette": [
+    "#0284c7",
+    "#04899a",
+    "#0f172a",
+    "#f8fafc",
+    "#ffffff"
+  ],
+  "color_roles": {
+    "canvas": "#ffffff",
+    "surface": "#f8fafc",
+    "primary": "#0284c7",
+    "secondary": "#04899a",
+    "heading": "#0f172a",
+    "body": "#475569",
+    "border": "#e2e8f0"
+  },
+  "fonts": {
+    "display": "Plus Jakarta Sans",
+    "body": "Inter",
+    "scale_jump": "80px / 16px (High Contrast)"
+  },
+  "macrostructure": "Feature Stack + Split Doctor Concierge",
+  "pitch_hook": "I benchmarked this redesign against modern clinical health standards (like Allia Health & Function Health) \u2014 clean clinical aesthetic, transparent treatment menus, and direct WhatsApp booking.",
+  "conversion_rationale": "Replaces confusing pinch-to-zoom clinic menus with an interactive treatment drawer and 1-tap WhatsApp doctor confirmation, cutting patient booking friction to zero."
+}

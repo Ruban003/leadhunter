@@ -10,6 +10,15 @@ Features:
 """
 import urllib.parse
 import re
+import os
+import sys
+
+# Ensure local imports work in serverless Vercel & scripts
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
+
+from inspo_intelligence import get_inspo_for_niche, generate_inspo_badge_html
 
 def generate_mockup_html(lead: dict) -> str:
     name = lead.get('name') or 'Luxe Studio'
@@ -18,6 +27,11 @@ def generate_mockup_html(lead: dict) -> str:
     phone = lead.get('phone') or '+91 80986 71563'
     domain = lead.get('domain') or 'business.com'
     requested_theme = lead.get('theme', '').lower()
+    
+    # Inspo Design Intelligence
+    inspo_intel = get_inspo_for_niche(niche)
+    inspo_bench_name = inspo_intel.get('benchmark_name', 'Curated Inspo System')
+    inspo_badge_html = generate_inspo_badge_html(inspo_intel)
     
     niche_lower = niche.lower()
     
@@ -1003,6 +1017,9 @@ def generate_mockup_html(lead: dict) -> str:
         <div class="designer-info">
             <span class="tag-concept">Bespoke UI Redesign</span>
             <span>Crafted for <strong>{name}</strong> by <strong>Ruban Velankanni</strong> (Bengaluru)</span>
+            <span class="tag-inspo-bench" onclick="toggleInspoDrawer()" style="cursor:pointer; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:5px;" title="Click to view full Inspo Design Specification">
+                <span style="color:#38bdf8;">✦</span> Benchmark: <strong>{inspo_bench_name}</strong> ↗
+            </span>
         </div>
         <div class="designer-cta-group">
             <button class="btn-theme-toggle" onclick="toggleTheme()" id="themeToggleBtn">
@@ -1207,6 +1224,7 @@ def generate_mockup_html(lead: dict) -> str:
             document.getElementById('themeLabel').textContent = nextTheme === 'light' ? 'Dark Mode' : 'Light Mode';
         }}
     </script>
+    {inspo_badge_html}
 </body>
 </html>
 """

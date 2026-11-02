@@ -18,6 +18,13 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import subprocess
 
+# Ensure local imports work in serverless & local scripts
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
+
+from inspo_intelligence import get_inspo_for_niche
+
 if sys.platform == 'win32':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
@@ -97,9 +104,12 @@ def build_artisan_email(name: str, city: str, niche: str, domain: str, flaws: li
     Style 1: The Apple Minimalist / Personal Designer Note.
     100% human-crafted tone. Zero corporate boxes or badges.
     Looks and feels like a personal note typed directly by Ruban on Apple Mail.
+    Enriched with Inspo extracted design intelligence benchmark.
     """
     flaws_text = flaws if flaws else ["Slow mobile rendering speed", "Missing direct 1-tap WhatsApp consultation", "Lack of verified customer review showcase"]
     case_study = get_niche_case_study(niche)
+    inspo_intel = get_inspo_for_niche(niche)
+    inspo_hook = inspo_intel.get("pitch_hook", "")
     
     # Plain text bullets
     plain_bullets = "\n".join([f"  • {f}" for f in flaws_text[:3]])
@@ -113,6 +123,8 @@ Instead of just pointing them out, I spent 20 minutes putting together a clean, 
 
 👉 View the live interactive preview:
 {mockup_url}
+
+{inspo_hook}
 
 {case_study}
 
@@ -150,6 +162,8 @@ portfolio.rvsmps.store
     <a href="{mockup_url}" style="color: #2563eb; text-decoration: underline; font-weight: 500; word-break: break-all;">{mockup_url}</a>
   </p>
   
+  <p style="margin-bottom: 14px; color: #475569; font-size: 14px; line-height: 1.5;"><em>{inspo_hook}</em></p>
+  
   <p style="margin-bottom: 16px; color: #475569; font-size: 14px;"><em>{case_study}</em></p>
   
   <p style="margin-bottom: 16px;">I'm an independent UI/UX designer based here in Bengaluru (Ruban Designs). If you like the direction and want to use this layout for your brand, I'm happy to help you put it live this week or hand over the clean code. If not, no worries at all — hope the prototype gives you some good design ideas!</p>
@@ -171,12 +185,14 @@ def build_punchy_email(name: str, city: str, niche: str, domain: str, flaws: lis
     Under 65 words. Respects busy owners' time. Gets straight to the point.
     """
     flaws_summary = flaws[0] if flaws else "slow mobile load latency"
+    inspo_intel = get_inspo_for_niche(niche)
+    bench_name = inspo_intel.get("benchmark_name", "modern industry standards")
     
     plain_body = f"""Hey {name} Team,
 
 Your brand visuals look great, but while viewing {domain} on mobile earlier, I noticed {flaws_summary.lower()} that makes direct booking on smartphones tricky.
 
-I put together an interactive mobile prototype to show how clean and instant it could look:
+I put together an interactive mobile prototype benchmarked against {bench_name} to show how clean and instant it could look:
 👉 {mockup_url}
 
 It takes 30 seconds to tap through on your phone. Would you be open to me putting this live for your team this week?
@@ -197,7 +213,7 @@ WhatsApp: +91 80986 71563 • portfolio.rvsmps.store
   
   <p style="margin-bottom: 14px;">Your brand visuals look great, but while viewing <strong>{domain}</strong> on mobile earlier, I noticed {flaws_summary.lower()} that makes direct booking on smartphones tricky.</p>
   
-  <p style="margin-bottom: 14px;">I put together an interactive mobile prototype to show how clean and instant it could look:</p>
+  <p style="margin-bottom: 14px;">I put together an interactive mobile prototype benchmarked against {bench_name} to show how clean and instant it could look:</p>
   
   <p style="margin: 16px 0; padding: 10px 14px; background-color: #f8fafc; border-left: 3px solid #0f172a; border-radius: 4px;">
     👉 <strong>Interactive Preview:</strong> <a href="{mockup_url}" style="color: #2563eb; text-decoration: underline; font-weight: 500;">{mockup_url}</a>

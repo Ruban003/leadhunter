@@ -1,0 +1,34 @@
+{
+  "slug": "duabyab-com--collections-skincare",
+  "benchmark_name": "DUA\u2122 Haute Skincare & Studio",
+  "benchmark_url": "https://duabyab.com",
+  "industry": "fashion",
+  "style": "editorial",
+  "mode": "light",
+  "vibe": "Boutique Luxury & Haute Aesthetics",
+  "northstar": "Muted rose editorial, ethereal serif type floating in a vast airy void with pristine whitespace.",
+  "palette": [
+    "#e11d48",
+    "#be123c",
+    "#1c1917",
+    "#fff1f2",
+    "#ffffff"
+  ],
+  "color_roles": {
+    "canvas": "#ffffff",
+    "surface": "#fff1f2",
+    "primary": "#e11d48",
+    "secondary": "#be123c",
+    "heading": "#1c1917",
+    "body": "#57534e",
+    "border": "#ffe4e6"
+  },
+  "fonts": {
+    "display": "Playfair Display",
+    "body": "Plus Jakarta Sans",
+    "scale_jump": "72px / 15px (Editorial Luxury)"
+  },
+  "macrostructure": "Split Studio + Visual Treatment Grid",
+  "pitch_hook": "I benchmarked this concept against luxury editorial benchmarks (like DUA\u2122 and Violette FR) \u2014 warm minimalist aesthetic, stylist spotlight, and 1-tap VIP WhatsApp booking.",
+  "conversion_rationale": "Bypasses 20\u201325% third-party aggregator commissions (like Fresha/Nearbuy) by giving your salon a bespoke VIP direct-booking experience."
+}

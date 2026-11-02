@@ -1,0 +1,34 @@
+{
+  "slug": "archdaily-com--about",
+  "benchmark_name": "ArchDaily Atelier",
+  "benchmark_url": "https://archdaily.com",
+  "industry": "architecture",
+  "style": "editorial",
+  "mode": "light",
+  "vibe": "Quietly Authoritative & Geometric Precision",
+  "northstar": "Deep indigo geometry, crisp sans-serif clarity, spacious and quietly authoritative.",
+  "palette": [
+    "#0f172a",
+    "#385ea7",
+    "#334155",
+    "#f1f5f9",
+    "#ffffff"
+  ],
+  "color_roles": {
+    "canvas": "#ffffff",
+    "surface": "#f8fafc",
+    "primary": "#0f172a",
+    "secondary": "#385ea7",
+    "heading": "#020617",
+    "body": "#334155",
+    "border": "#e2e8f0"
+  },
+  "fonts": {
+    "display": "Playfair Display",
+    "body": "Source Sans 3",
+    "scale_jump": "76px / 16px (Architectural Monumental)"
+  },
+  "macrostructure": "Photographic Showcase + Project Ledger",
+  "pitch_hook": "I benchmarked this portfolio concept against world-class architectural publications (like ArchDaily and Norm Architects) \u2014 full-bleed project imagery, spatial clarity, and direct consultation inquiries.",
+  "conversion_rationale": "High-net-worth clients judge architectural studios by spatial restraint and portfolio speed. This layout showcases blueprints and 4K site photography without lag."
+}
