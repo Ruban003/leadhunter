@@ -34,6 +34,13 @@ else:
     PORTFOLIO_PAGE = "<h1>Ruban Designs Portfolio</h1>"
 
 class handler(http.server.BaseHTTPRequestHandler):
+    def do_HEAD(self):
+        """Respond cleanly to HEAD requests from automated link scanners, preview crawlers, and spam filters."""
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.send_header('Cache-Control', 'public, max-age=3600')
+        self.end_headers()
+
     def do_GET(self):
         global CURRENT_LEADS
         parsed = urllib.parse.urlparse(self.path)
